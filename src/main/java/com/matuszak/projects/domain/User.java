@@ -1,6 +1,7 @@
 package com.matuszak.projects.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CollectionType;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -31,14 +32,13 @@ public class User {
     @JoinColumn(name = "userDetailsId")
     private UserDetails userDetails;
 
-    @OneToMany
-    @JoinColumn(name = "userRolesId")
-    private List<UserRole> userRoles;
+    @ElementCollection
+    private List<String> userRoles;
 
     public User() {
     }
 
-    public User(String username, String password, boolean enabled, UserDetails userDetails, List<UserRole> userRoles) {
+    public User(String username, String password, boolean enabled, UserDetails userDetails, List<String> userRoles) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -86,11 +86,11 @@ public class User {
         this.userDetails = userDetails;
     }
 
-    public List<UserRole> getUserRoles() {
+    public List<String> getUserRoles() {
         return userRoles;
     }
 
-    public void setUserRoles(List<UserRole> userRoles) {
+    public void setUserRoles(List<String> userRoles) {
         this.userRoles = userRoles;
     }
 }

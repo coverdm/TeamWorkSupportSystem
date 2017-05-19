@@ -1,12 +1,9 @@
 package com.matuszak.projects.secure;
 
-import com.matuszak.projects.domain.UserRole;
-import com.matuszak.projects.repositories.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -21,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by dawid on 03.04.17.
@@ -43,18 +38,18 @@ public class JWTLogin extends GenericFilterBean{
 
             Claims claims = Jwts.parser().setSigningKey("someSicretKey").parseClaimsJws(token).getBody();
 
-//            List<UserRole> roles = (ArrayList<UserRole>) claims.get("claims");
             List<SimpleGrantedAuthority> grantedAuthorityList = new ArrayList<>();
-//
-//            roles.stream().forEach(e -> logger.info(e.getRole()));
-//            logger.info("SIZE: " + roles.size());
-//
-//            for(UserRole role:roles) {
-//                grantedAuthorityList.add(new SimpleGrantedAuthority(role.getRole()));
-//                logger.info("ROLE: " + role.getRole());
+
+            List<String> authorities = (List<String>) claims.get("claims");
+
+            authorities.stream().forEach(e -> logger.info(e));
+            logger.info("SIZE: " + authorities.size());
+
+            for(String role:authorities)
+                grantedAuthorityList.add(new SimpleGrantedAuthority(role));
 //}
 
-            grantedAuthorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+//            grantedAuthorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
 
             User user = new User(claims.getSubject(), "", grantedAuthorityList);

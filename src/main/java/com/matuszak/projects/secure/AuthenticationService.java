@@ -47,7 +47,7 @@ public class AuthenticationService {
 
     private String generateToken(User user){
 
-        user.getUserRoles().stream().forEach(e->logger.info("ROLE: " + e.getRole()));
+        user.getUserRoles().stream().forEach(e->logger.info(e));
 
         return Jwts.builder()
                 .claim("claims", user.getUserRoles())
