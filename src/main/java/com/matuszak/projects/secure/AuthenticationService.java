@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -20,6 +22,7 @@ import java.util.logging.Logger;
 @Service
 public class AuthenticationService {
 
+    private Logger logger = Logger.getLogger(getClass().getName());
     private UserRepository userRepository;
 
     @Autowired
@@ -43,6 +46,9 @@ public class AuthenticationService {
     }
 
     private String generateToken(User user){
+
+        user.getUserRoles().stream().forEach(e->logger.info("ROLE: " + e.getRole()));
+
         return Jwts.builder()
                 .claim("claims", user.getUserRoles())
                 .setSubject(user.getUsername())

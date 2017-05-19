@@ -9,7 +9,10 @@ import org.hibernate.internal.SessionFactoryRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -48,6 +53,7 @@ public class AuthorizationController {
     public ResponseEntity<?> authenticate(@RequestBody User user, HttpServletResponse response) throws IOException {
 
         logger.info(user.getUsername() + " " + user.getPassword());
+
         String token = authenticationService.authenticate(user, response);
 
         Map<String,String> map = new HashMap<>();
@@ -66,11 +72,14 @@ public class AuthorizationController {
     }
 
     /////////////////////////////////// REGISTER ROUTER /////////////////////////////////
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping(value = "/register")
-    public ResponseEntity<?> testing(@RequestBody User user){
-        userService.register(user);
-        return new ResponseEntity<Object>(HttpStatus.CREATED);
+    @GetMapping(value = "/testingowo")
+    public ResponseEntity<?> testing(@AuthenticationPrincipal Principal principal, HttpServletRequest httpServletRequest){
+
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+        return new ResponseEntity<Object>(authorities, HttpStatus.CREATED);
     }
 
 }

@@ -6,6 +6,7 @@ import com.matuszak.projects.domain.UserDetails;
 import com.matuszak.projects.domain.UserRole;
 import com.matuszak.projects.repositories.ProjectRepository;
 import com.matuszak.projects.repositories.UserRepository;
+import com.matuszak.projects.repositories.UserRoleRepositorium;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,12 +30,19 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(final UserRepository userRepository){
+    CommandLineRunner commandLineRunner(final UserRepository userRepository, final UserRoleRepositorium userRoleRepositorium){
         return args -> {
-            Stream.of("admin,admin,true,Admin", "user,user,false,JakasTamRola", "kasia,angelus,true,Admin")
+            Stream.of("admin,admin,true,ADMIN", "user,user,false,USER", "kasia,angelus,true,Admin")
                     .map( tpl -> tpl.split(","))
                     .forEach(tpl->{
-                        userRepository.save(new User(tpl[0], tpl[1], Boolean.parseBoolean(tpl[2]), null, null));
+
+                        List<UserRole> userRoles = new ArrayList<>();
+
+                        userRoles.add(new UserRole("ROLE_ADMIN"));
+                        userRoles.add(new UserRole("ROLE_USER"));
+                        userRoleRepositorium.save(userRoles);
+
+                        userRepository.save(new User(tpl[0], tpl[1], Boolean.parseBoolean(tpl[2]), null, userRoles));
                     });
         };
     }
