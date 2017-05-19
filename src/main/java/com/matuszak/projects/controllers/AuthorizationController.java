@@ -64,4 +64,13 @@ public class AuthorizationController {
         userService.register(user);
         return new ResponseEntity<Object>(HttpStatus.CREATED);
     }
+
+    /////////////////////////////////// REGISTER ROUTER /////////////////////////////////
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "/register")
+    public ResponseEntity<?> testing(@RequestBody User user){
+        userService.register(user);
+        return new ResponseEntity<Object>(HttpStatus.CREATED);
+    }
+
 }

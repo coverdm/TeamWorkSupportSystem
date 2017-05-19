@@ -44,7 +44,7 @@ public class JWTLogin extends GenericFilterBean{
             Claims claims = Jwts.parser().setSigningKey("someSicretKey").parseClaimsJws(token).getBody();
 
             List<UserRole> roles = (ArrayList<UserRole>) claims.get("claims");
-            List<SimpleGrantedAuthority> grantedAuthorityList = new ArrayList<SimpleGrantedAuthority>();
+            List<SimpleGrantedAuthority> grantedAuthorityList = new ArrayList<>();
 
             for(UserRole role:roles) {
                 grantedAuthorityList.add(new SimpleGrantedAuthority(role.getRole()));

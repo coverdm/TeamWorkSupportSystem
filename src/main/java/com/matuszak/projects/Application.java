@@ -31,7 +31,7 @@ public class Application {
     @Bean
     CommandLineRunner commandLineRunner(final UserRepository userRepository){
         return args -> {
-            Stream.of("admin,admin,true,Admin", "user,user,false,User", "kasia,angelus,true,Admin")
+            Stream.of("admin,admin,true,Admin", "user,user,false,JakasTamRola", "kasia,angelus,true,Admin")
                     .map( tpl -> tpl.split(","))
                     .forEach(tpl->{
                         userRepository.save(new User(tpl[0], tpl[1], Boolean.parseBoolean(tpl[2]), null, null));
