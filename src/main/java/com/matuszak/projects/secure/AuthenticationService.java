@@ -24,6 +24,7 @@ public class AuthenticationService {
 
     private Logger logger = Logger.getLogger(getClass().getName());
     private UserRepository userRepository;
+    private static final String secretKey = "MyOwnSecretKey";
 
     @Autowired
     public AuthenticationService(UserRepository userRepository) {
@@ -46,14 +47,11 @@ public class AuthenticationService {
     }
 
     private String generateToken(User user){
-
-        user.getUserRoles().stream().forEach(e->logger.info(e));
-
         return Jwts.builder()
                 .claim("claims", user.getUserRoles())
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis() + 100000))
-                .signWith(SignatureAlgorithm.HS256, "someSicretKey")
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 }
