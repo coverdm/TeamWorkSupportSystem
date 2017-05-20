@@ -7,13 +7,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -24,7 +20,7 @@ public class AuthenticationService {
 
     private Logger logger = Logger.getLogger(getClass().getName());
     private UserRepository userRepository;
-    private static final String secretKey = "MyOwnSecretKey";
+    private static final String SECRET_KEY = "MyOwnSecretKey";
 
     @Autowired
     public AuthenticationService(UserRepository userRepository) {
@@ -51,7 +47,7 @@ public class AuthenticationService {
                 .claim("claims", user.getUserRoles())
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis() + 100000))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
 }

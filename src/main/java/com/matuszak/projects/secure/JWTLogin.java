@@ -24,33 +24,30 @@ import java.util.List;
  */
 public class JWTLogin extends GenericFilterBean{
 
+    private static final String SECRET_KEY = "MyOwnSecretKey";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer";
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String authorization = request.getHeader("Authorization");
+        String authorization = request.getHeader(AUTHORIZATION_HEADER);
 
-        if(authorization == null || !authorization.startsWith("Bearer")){
+        if(authorization == null || !authorization.startsWith(TOKEN_PREFIX)){
             ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }else {
 
             String token = authorization.substring(7);
 
-            Claims claims = Jwts.parser().setSigningKey("someSicretKey").parseClaimsJws(token).getBody();
+            Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
 
             List<SimpleGrantedAuthority> grantedAuthorityList = new ArrayList<>();
 
             List<String> authorities = (List<String>) claims.get("claims");
 
-            authorities.stream().forEach(e -> logger.info(e));
-            logger.info("SIZE: " + authorities.size());
-
             for(String role:authorities)
                 grantedAuthorityList.add(new SimpleGrantedAuthority(role));
-//}
-
-//            grantedAuthorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
 
             User user = new User(claims.getSubject(), "", grantedAuthorityList);
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,"", grantedAuthorityList));
