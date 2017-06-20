@@ -70,16 +70,4 @@ public class AuthorizationController {
         userService.register(user);
         return new ResponseEntity<Object>(HttpStatus.CREATED);
     }
-
-    /////////////////////////////////// REGISTER ROUTER /////////////////////////////////
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping(value = "/testingowo")
-    public ResponseEntity<?> testing(@AuthenticationPrincipal Principal principal, HttpServletRequest httpServletRequest){
-
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-
-        return new ResponseEntity<Object>(authorities, HttpStatus.CREATED);
-    }
-
 }

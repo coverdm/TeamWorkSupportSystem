@@ -14,7 +14,7 @@ import java.util.List;
  * Created by dawid on 20.05.17.
  */
 @RestController
-@RequestMapping("/rest")
+@RequestMapping("/rest/userManagement")
 public class UserManagementController {
 
    private UserRepository userRepository;
