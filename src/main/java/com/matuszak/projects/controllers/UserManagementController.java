@@ -24,6 +24,11 @@ public class UserManagementController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping("/")
+    public String getHello(){
+       return "Hello world";
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     @CrossOrigin(origins = "localhost:4200")
