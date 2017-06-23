@@ -34,14 +34,10 @@
 
     <dependencies>
 
-        <!--###################################### WEB CONFIG DEPENDENCY ######################################-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <!--##################################### DATA ACCESS DEPENDENCIES ####################################-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -54,8 +50,6 @@
             <version>5.1.41</version>
         </dependency>
 
-        <!--###################################### SECURITY DEPENDENCIES ######################################-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -66,6 +60,12 @@
             <artifactId>jjwt</artifactId>
             <version>0.7.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
