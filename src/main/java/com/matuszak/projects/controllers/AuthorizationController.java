@@ -37,12 +37,12 @@ import java.util.logging.Logger;
 @RequestMapping("/api/auth")
 public class AuthorizationController {
 
-    private AuthenticationService authenticationService;
-    private UserService userService;
-    private Logger logger = Logger.getLogger(getClass().getName());
+    private final AuthenticationService authenticationService;
+    private final UserService userService;
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public AuthorizationController(final AuthenticationService authenticationService,final UserService userService) {
+    public AuthorizationController(AuthenticationService authenticationService,UserService userService) {
         this.authenticationService = authenticationService;
         this.userService = userService;
     }
