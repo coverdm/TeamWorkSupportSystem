@@ -34,13 +34,13 @@ public class JWTLogin extends GenericFilterBean{
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
 
-        if(authorization == null || !authorization.startsWith(TOKEN_PREFIX)){
-            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        if(isValidAuthorization(authorization)){
+            HttpServletErrorHandler((HttpServletResponse) servletResponse);
         }else {
 
-            String token = authorization.substring(7);
+            String token = extractToken(authorization);
 
-            Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+            Claims claims = extractClaims(token);
 
             List<SimpleGrantedAuthority> grantedAuthorityList = new ArrayList<>();
 
@@ -50,8 +50,26 @@ public class JWTLogin extends GenericFilterBean{
                 grantedAuthorityList.add(new SimpleGrantedAuthority(role));
 
             User user = new User(claims.getSubject(), "", grantedAuthorityList);
+
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,"", grantedAuthorityList));
             filterChain.doFilter(servletRequest, servletResponse);
         }
     }
+
+    private Claims extractClaims(String token) {
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+    }
+
+    private String extractToken(String authorization) {
+        return authorization.substring(7);
+    }
+
+    private void HttpServletErrorHandler(HttpServletResponse servletResponse) throws IOException {
+        servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
+    private boolean isValidAuthorization(String authString){
+        return authString == null || !authString.startsWith(TOKEN_PREFIX) ? true : false;
+    }
+
 }

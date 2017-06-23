@@ -17,6 +17,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.PortMapperImpl;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 /**
  * Created by dawid on 18.03.17.
@@ -28,8 +29,8 @@ public class WebSecureConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/", "/rest/auth/login", "/rest/auth/register");
-//                .antMatchers(HttpMethod.OPTIONS, "/**");
+        web.ignoring().antMatchers("/", "/rest/auth/login", "/rest/auth/register")
+                .antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
     @Override
