@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * Created by dawid on 06.04.17.
  */
 @RestController
-@RequestMapping("/rest/project")
+@RequestMapping("/api/project")
 public class MainController {
 
     private ProjectService projectService;

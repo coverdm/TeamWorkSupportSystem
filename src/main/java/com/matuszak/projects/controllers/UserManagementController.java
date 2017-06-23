@@ -2,6 +2,7 @@ package com.matuszak.projects.controllers;
 
 import com.matuszak.projects.domain.User;
 import com.matuszak.projects.repositories.UserRepository;
+import com.matuszak.projects.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,29 +15,23 @@ import java.util.List;
  * Created by dawid on 20.05.17.
  */
 @RestController
-@RequestMapping("/rest/userManagement")
+@RequestMapping("/api/userManagement")
 public class UserManagementController {
 
-   private UserRepository userRepository;
+    private UserService userService;
 
-   @Autowired
-    public UserManagementController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @GetMapping("/")
-    public String getHello(){
-       return "Hello world";
+    @Autowired
+    public UserManagementController(final UserService userService) {
+        this.userService = userService;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
-    @CrossOrigin(origins = "localhost:4200")
-    public ResponseEntity<List<User>> userList(){
+    public ResponseEntity<List<User>> userList() {
 
-        List<User> all = userRepository.findAll();
+        List<User> all = userService.getAllUsers();
 
-        if(all.size() == 0)
+        if (all.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
             return new ResponseEntity<>(all, HttpStatus.OK);
@@ -44,9 +39,8 @@ public class UserManagementController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update")
-    @CrossOrigin(origins = "localhost:4200")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
-        userRepository.save(user);
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
+        userService.save(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
