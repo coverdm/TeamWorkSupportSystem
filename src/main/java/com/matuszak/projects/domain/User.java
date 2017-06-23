@@ -1,7 +1,8 @@
 package com.matuszak.projects.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.CollectionType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.matuszak.projects.domain.enums.ProgrammingLanguages;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -28,22 +29,33 @@ public class User {
     @NotNull
     private boolean enabled;
 
-    @OneToOne
-    @JoinColumn(name = "userDetailsId")
-    private UserDetails userDetails;
-
     @ElementCollection
     private List<String> userRoles;
+
+    @NotEmpty
+    private String firstName;
+
+    @NotEmpty
+    private String lastName;
+
+    @ManyToMany(mappedBy = "participants")
+    private List<Project> projects;
+
+    @ElementCollection
+    private List<ProgrammingLanguages> experience;
 
     public User() {
     }
 
-    public User(String username, String password, boolean enabled, UserDetails userDetails, List<String> userRoles) {
+    public User(String username, String password, boolean enabled, List<String> userRoles, String firstName, String lastName, List<Project> projects, List<ProgrammingLanguages> experience) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
-        this.userDetails = userDetails;
         this.userRoles = userRoles;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.projects = projects;
+        this.experience = experience;
     }
 
     public long getId() {
@@ -62,10 +74,12 @@ public class User {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
@@ -78,19 +92,43 @@ public class User {
         this.enabled = enabled;
     }
 
-    public UserDetails getUserDetails() {
-        return userDetails;
-    }
-
-    public void setUserDetails(UserDetails userDetails) {
-        this.userDetails = userDetails;
-    }
-
     public List<String> getUserRoles() {
         return userRoles;
     }
 
     public void setUserRoles(List<String> userRoles) {
         this.userRoles = userRoles;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> some) {
+        this.projects = some;
+    }
+
+    public List<ProgrammingLanguages> getExperience() {
+        return experience;
+    }
+
+    public void setExperience(List<ProgrammingLanguages> experience) {
+        this.experience = experience;
     }
 }
