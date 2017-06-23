@@ -44,7 +44,7 @@ public class Project {
     private Double price;
 
     @ManyToMany
-    private List<UserDetails> participants;
+    private List<User> participants;
 
     @OneToMany
     @JoinColumn(name = "projectId")
@@ -90,11 +90,11 @@ public class Project {
         this.price = price;
     }
 
-    public List<UserDetails> getParticipants() {
+    public List<User> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<UserDetails> participants) {
+    public void setParticipants(List<User> participants) {
         this.participants = participants;
     }
 
