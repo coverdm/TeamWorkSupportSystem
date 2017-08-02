@@ -11,18 +11,16 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Created by dawid on 07.03.17.
- */
 @Data
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project {
+public class Project implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +38,14 @@ public class Project {
     @NotNull
     private User owner;
 
-    @NotEmpty
+    @Enumerated
+    @NotNull
+    private ProjectStatus status;
+
+    @NotNull
     private String description;
 
+    @NotNull
     private LocalDate createdDate;
 
     private Double price;
