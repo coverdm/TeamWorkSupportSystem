@@ -14,8 +14,12 @@ public class TokenGenerator {
         return Jwts.builder()
                 .claim("claims", user.getUserRole())
                 .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis() + 100000))
+                .setIssuedAt(expirationDate())
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
+    }
+
+    private Date expirationDate(){
+        return new Date(System.currentTimeMillis() + 100000);
     }
 }
