@@ -7,7 +7,7 @@ public interface UserService {
 
     List<User> getAllUsers();
     void saveUser(User user);
-    Optional<User> getUserByUsername(String username);
+    User getUserByUsername(String username) throws UserNotFoundException;
     void deleteUser(User user);
-    List<User> getUsersByUsername(List<String> usernames);
+    User changePassword(String newPassword);
 }
