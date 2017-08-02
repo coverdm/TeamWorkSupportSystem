@@ -40,4 +40,9 @@ public class WebSecureConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public TokenGenerator tokenGenerator(){
+        return new TokenGenerator();
+    }
 }

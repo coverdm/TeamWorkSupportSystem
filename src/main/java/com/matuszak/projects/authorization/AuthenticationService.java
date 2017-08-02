@@ -3,13 +3,10 @@ package com.matuszak.projects.authorization;
 import com.matuszak.projects.user.User;
 import com.matuszak.projects.user.UserNotFoundException;
 import com.matuszak.projects.user.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,13 +17,15 @@ public class AuthenticationService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final Logger logger = Logger.getLogger(getClass().getName());
-
-    private static final String SECRET_KEY = "MyOwnSecretKey";
+    private final TokenGenerator tokenGenerator;
 
     @Autowired
-    public AuthenticationService(final UserService userService, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(UserService userService,
+                                 PasswordEncoder passwordEncoder,
+                                 TokenGenerator tokenGenerator) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.tokenGenerator = tokenGenerator;
     }
 
     public Map<String, Object> authenticate(User user){
@@ -37,7 +36,7 @@ public class AuthenticationService {
             boolean matches = passwordEncoder.matches(user.getPassword(), userDB.getPassword());
 
             if(matches && userDB.isEnabled()){
-                return authentication(userDB, generateToken(userDB));
+                return createTokenUserResponse(userDB, tokenGenerator.generateToken(user));
             }
 
         }catch (UserNotFoundException e){
@@ -47,19 +46,9 @@ public class AuthenticationService {
         return null;
     }
 
-
-    private String generateToken(User user){
-        return Jwts.builder()
-                .claim("claims", user.getUserRole())
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis() + 100000))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
-    }
-
-    private Map<String, Object> authentication(User current, String token){
+    private Map<String, Object> createTokenUserResponse(User authenticatedUser, String token){
         Map<String,Object> auth = new HashMap<>();
-        auth.put("current", current);
+        auth.put("user", authenticatedUser);
         auth.put("token", token);
         return auth;
     }
