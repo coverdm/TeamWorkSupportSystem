@@ -1,16 +1,23 @@
 package com.matuszak.projects.task;
 
 import com.matuszak.projects.user.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
-/**
- * Created by dawid on 22.03.17.
- */
 @Entity
-public class Task {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Task implements Serializable {
 
     @Id
     @GeneratedValue
@@ -30,45 +37,5 @@ public class Task {
     private String description;
 
     @NotNull
-    private Date deadline;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public User getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(User employee) {
-        this.employee = employee;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(Date deadline) {
-        this.deadline = deadline;
-    }
+    private LocalDate deadline;
 }
