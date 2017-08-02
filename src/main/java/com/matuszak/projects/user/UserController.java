@@ -8,48 +8,47 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @RequestMapping("/api/user")
 @RestController
 public class UserController {
 
-    private final UserService userService;
+    private final UserPersistence userPersistence;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public UserController(final UserService userService) {
-        this.userService = userService;
+    public UserController(final UserPersistence userPersistence) {
+        this.userPersistence = userPersistence;
     }
 
     @GetMapping("/details")
     public ResponseEntity<User> getUserDetails(Principal principal) {
-        User user = userService.getUserByUsername(principal.getName());
+        User user = userPersistence.getUserByUsername(principal.getName());
         return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(User user){
-        userService.saveUser(user);
+        userPersistence.saveUser(user);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/detele")
     public ResponseEntity<?> deleteUser(User user){
-        userService.deleteUser(user);
+        userPersistence.deleteUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createUser(User user){
-        userService.saveUser(user);
+        userPersistence.saveUser(user);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/getAllUsers")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers(){
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userPersistence.getAllUsers(), HttpStatus.ACCEPTED);
     }
 }

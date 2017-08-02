@@ -2,7 +2,6 @@ package com.matuszak.projects.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +9,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserPersistenceImpl implements UserPersistence {
 
     private final UserRepository userRepository;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserPersistenceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -34,11 +33,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(User user) {
         this.userRepository.delete(user);
-    }
-
-    @Override
-    public List<User> getUsersByUsername(List<String> usernames) {
-        return this.userRepository.getUsersByUsernameIn(usernames);
     }
 
     @Override

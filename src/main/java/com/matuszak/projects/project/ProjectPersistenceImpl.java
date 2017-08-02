@@ -1,6 +1,6 @@
 package com.matuszak.projects.project;
 
-import com.matuszak.projects.user.UserService;
+import com.matuszak.projects.user.UserPersistence;
 import com.matuszak.projects.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,23 +8,20 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectPersistenceImpl implements ProjectPersistence {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
     private final ProjectRepository projectRepository;
-    private final UserService userService;
+    private final UserPersistence userPersistence;
 
     @Autowired
-    public ProjectServiceImpl(ProjectRepository projectRepository, UserService userService) {
+    public ProjectPersistenceImpl(ProjectRepository projectRepository, UserPersistence userPersistence) {
         this.projectRepository = projectRepository;
-        this.userService = userService;
+        this.userPersistence = userPersistence;
     }
 
     @Override
@@ -39,7 +36,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         String loggedUsername = getLoggedUsername();
 
-        User owner = userService.getUserByUsername(loggedUsername);
+        User owner = userPersistence.getUserByUsername(loggedUsername);
 
         project.setOwner(owner);
 

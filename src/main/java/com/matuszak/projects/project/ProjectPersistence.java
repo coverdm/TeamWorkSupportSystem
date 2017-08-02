@@ -5,7 +5,7 @@ import com.matuszak.projects.user.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProjectService {
+public interface ProjectPersistence {
 
     List<Project> getProjects();
     List<Project> getProjectsByOwnerUsername(String username);

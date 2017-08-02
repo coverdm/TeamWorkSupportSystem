@@ -2,7 +2,7 @@ package com.matuszak.projects.task;
 
 import java.util.List;
 
-public interface TaskPersistenceService {
+public interface TaskPersistence {
 
     Task create(String projectUUID, Task task);
 

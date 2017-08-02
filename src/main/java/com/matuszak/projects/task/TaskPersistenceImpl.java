@@ -1,7 +1,7 @@
 package com.matuszak.projects.task;
 
 import com.matuszak.projects.project.Project;
-import com.matuszak.projects.project.ProjectService;
+import com.matuszak.projects.project.ProjectPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,20 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TaskPersistenceServiceImpl implements TaskPersistenceService {
+public class TaskPersistenceImpl implements TaskPersistence {
 
     private final TaskRepository taskRepository;
-    private final ProjectService projectService;
+    private final ProjectPersistence projectPersistence;
 
     @Autowired
-    public TaskPersistenceServiceImpl(TaskRepository taskRepository, ProjectService projectService) {
+    public TaskPersistenceImpl(TaskRepository taskRepository, ProjectPersistence projectPersistence) {
         this.taskRepository = taskRepository;
-        this.projectService = projectService;
+        this.projectPersistence = projectPersistence;
     }
 
     @Override
     public Task create(String projectUUID, Task task) {
-        Project projectByUUID = projectService.getProjectByUUID(projectUUID);
+        Project projectByUUID = projectPersistence.getProjectByUUID(projectUUID);
         List<Task> tasks = projectByUUID.getTasks();
 
         if (tasks != null) {
@@ -44,7 +44,7 @@ public class TaskPersistenceServiceImpl implements TaskPersistenceService {
 
     @Override
     public List<Task> getTasksFromProject(String uuid) {
-        return projectService.getProjectByUUID(uuid).getTasks();
+        return projectPersistence.getProjectByUUID(uuid).getTasks();
     }
 
     @Override

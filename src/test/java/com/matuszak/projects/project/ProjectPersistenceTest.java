@@ -5,7 +5,7 @@ import com.matuszak.projects.TestConfiguration;
 import com.matuszak.projects.authorization.Role;
 import com.matuszak.projects.user.User;
 import com.matuszak.projects.user.UserRepository;
-import com.matuszak.projects.user.UserService;
+import com.matuszak.projects.user.UserPersistence;
 import com.matuszak.projects.util.ProgrammingLanguages;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class, TestConfiguration.class})
-public class ProjectServiceTest {
+public class ProjectPersistenceTest {
 
     @MockBean private ProjectRepository projectRepository;
     @MockBean private UserRepository userRepository;
 
-    @Autowired private UserService userService;
-    @Autowired private ProjectService projectService;
+    @Autowired private UserPersistence userPersistence;
+    @Autowired private ProjectPersistence projectPersistence;
     @Autowired private AuthenticationManager authenticationManager;
 
     private Authentication authentication;
@@ -112,7 +112,7 @@ public class ProjectServiceTest {
         when(projectRepository.getProjectsByOwnerUsername(username)).thenReturn(projects);
 
         //when
-        List<Project> ownedProjects = this.projectService.getProjectsByOwnerUsername(username);
+        List<Project> ownedProjects = this.projectPersistence.getProjectsByOwnerUsername(username);
 
         //then
         Assertions.assertThat(projects).isEqualTo(ownedProjects);
@@ -127,7 +127,7 @@ public class ProjectServiceTest {
         when(projectRepository.findAll()).thenReturn(projects);
 
         //when
-        List<Project> gotProjects = this.projectService.getProjects();
+        List<Project> gotProjects = this.projectPersistence.getProjects();
 
         //then
         Assertions.assertThat(projects).isEqualTo(gotProjects);
@@ -146,7 +146,7 @@ public class ProjectServiceTest {
         when(projectRepository.save(project1)).thenReturn(project1);
 
         // when
-        Project updatedProject = projectService.addParticipants(uuid, newParticipants);
+        Project updatedProject = projectPersistence.addParticipants(uuid, newParticipants);
 
         // then
         Assertions.assertThat(project1).isEqualToComparingFieldByField(updatedProject);
@@ -162,7 +162,7 @@ public class ProjectServiceTest {
         when(projectRepository.getProjectByUuid(wrongUUID)).thenReturn(project);
 
         //when && then
-        Assertions.assertThatThrownBy(() -> projectService.getProjectByUUID(wrongUUID))
+        Assertions.assertThatThrownBy(() -> projectPersistence.getProjectByUUID(wrongUUID))
                 .isInstanceOf(ProjectNotFoundException.class);
     }
 
@@ -177,7 +177,7 @@ public class ProjectServiceTest {
                 .thenReturn(project);
 
         //when
-        Project projectByUUID = projectService.getProjectByUUID(uuid);
+        Project projectByUUID = projectPersistence.getProjectByUUID(uuid);
 
         //then
         Assertions.assertThat(projectByUUID).isEqualToComparingFieldByField(project1);
@@ -196,7 +196,7 @@ public class ProjectServiceTest {
         when(projectRepository.save(this.project1)).thenReturn(this.project1);
 
         //when
-        Project savedProject = projectService.saveProject(this.project1);
+        Project savedProject = projectPersistence.saveProject(this.project1);
 
         //then
         Assertions.assertThat(savedProject)
@@ -218,7 +218,7 @@ public class ProjectServiceTest {
         when(projectRepository.getProjectByUuid(uuid)).thenReturn(project);
 
         //when
-        Project updatedProject = projectService.changeStatus(uuid, ProjectStatus.FINISHED);
+        Project updatedProject = projectPersistence.changeStatus(uuid, ProjectStatus.FINISHED);
 
         //then
         Assertions.assertThat(updatedProject.getStatus()).isEqualTo(ProjectStatus.FINISHED);

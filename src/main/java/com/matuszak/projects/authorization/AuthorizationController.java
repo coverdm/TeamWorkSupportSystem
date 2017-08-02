@@ -1,7 +1,7 @@
 package com.matuszak.projects.authorization;
 
 import com.matuszak.projects.user.User;
-import com.matuszak.projects.user.UserService;
+import com.matuszak.projects.user.UserPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ import java.util.logging.Logger;
 public class AuthorizationController {
 
     private final AuthenticationService authenticationService;
-    private final UserService userService;
+    private final UserPersistence userPersistence;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public AuthorizationController(AuthenticationService authenticationService,UserService userService) {
+    public AuthorizationController(AuthenticationService authenticationService,UserPersistence userPersistence) {
         this.authenticationService = authenticationService;
-        this.userService = userService;
+        this.userPersistence = userPersistence;
     }
 
     @PostMapping(value = "/login")
@@ -34,7 +34,7 @@ public class AuthorizationController {
 
     @PostMapping(value = "/register")
     public ResponseEntity<?> register(@RequestBody User user){
-        userService.saveUser(user);
+        userPersistence.saveUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

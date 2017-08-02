@@ -5,7 +5,7 @@ import com.matuszak.projects.TestConfiguration;
 import com.matuszak.projects.authorization.Role;
 import com.matuszak.projects.project.Project;
 import com.matuszak.projects.project.ProjectRepository;
-import com.matuszak.projects.project.ProjectService;
+import com.matuszak.projects.project.ProjectPersistence;
 import com.matuszak.projects.project.ProjectStatus;
 import com.matuszak.projects.user.User;
 import com.matuszak.projects.util.ProgrammingLanguages;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class, TestConfiguration.class})
-public class TaskPersistenceServiceTest {
+public class TaskPersistenceTest {
 
     @MockBean
     TaskRepository taskRepository;
@@ -36,10 +36,10 @@ public class TaskPersistenceServiceTest {
     ProjectRepository projectRepository;
 
     @Autowired
-    ProjectService projectService;
+    ProjectPersistence projectPersistence;
 
     @Autowired
-    TaskPersistenceService taskPersistenceService;
+    TaskPersistence taskPersistence;
 
     @Test
     public void shouldPersistNewTask(){
@@ -87,7 +87,7 @@ public class TaskPersistenceServiceTest {
         when(taskRepository.save(firstTask)).thenReturn(firstTask);
         when(projectRepository.getProjectByUuid(project.getUuid())).thenReturn(Optional.of(project));
 
-        Task task = taskPersistenceService.create(project.getUuid(), firstTask);
+        Task task = taskPersistence.create(project.getUuid(), firstTask);
 
         Assertions.assertThat(firstTask).isEqualToComparingFieldByField(task);
     }

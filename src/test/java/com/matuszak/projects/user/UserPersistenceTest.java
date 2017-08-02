@@ -20,10 +20,11 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class, TestConfiguration.class})
-public class UserServiceTest {
+public class UserPersistenceTest {
 
     @MockBean UserRepository userRepository;
-    @Autowired UserService userService;
+    @Autowired
+    UserPersistence userPersistence;
 
     private static User user1, user2;
 
@@ -60,12 +61,12 @@ public class UserServiceTest {
 
         //given
         String username = user1.getUsername();
-        Optional<User> user = Optional.of(UserServiceTest.user1);
+        Optional<User> user = Optional.of(UserPersistenceTest.user1);
 
         when(userRepository.findUserByUsername(username)).thenReturn(user);
 
         //when
-        User userDB = userService.getUserByUsername(username);
+        User userDB = userPersistence.getUserByUsername(username);
 
         //then
         Assertions.assertThat(userDB.getUsername()).isEqualTo(username);

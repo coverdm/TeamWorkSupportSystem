@@ -13,32 +13,32 @@ import java.util.logging.Logger;
 @RequestMapping("/api/project")
 public class ProjectController {
 
-    private final ProjectService projectService;
+    private final ProjectPersistence projectPersistence;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
+    public ProjectController(ProjectPersistence projectPersistence) {
+        this.projectPersistence = projectPersistence;
     }
 
     @PostMapping("/create")
     public ResponseEntity<Project> createProject(@RequestBody Project project){
-        return new ResponseEntity<>(this.projectService.saveProject(project),HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(this.projectPersistence.saveProject(project),HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{uuid}")
     public ResponseEntity<Project> getProject(@PathVariable("uuid") String uuid){
-        return new ResponseEntity<>(projectService.getProjectByUUID(uuid), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(projectPersistence.getProjectByUUID(uuid), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/{uuid}/addParticipants")
     public ResponseEntity<?> addParticipant(@RequestBody List<User> user, @PathVariable String uuid){
-        projectService.addParticipants(uuid, user);
+        projectPersistence.addParticipants(uuid, user);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/getAllProjects")
     public ResponseEntity<List<Project>> getAllProjects(){
-        return new ResponseEntity<>(this.projectService.getProjects(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(this.projectPersistence.getProjects(), HttpStatus.ACCEPTED);
     }
 }
