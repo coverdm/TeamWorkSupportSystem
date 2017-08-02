@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -17,15 +16,15 @@ public class AuthenticationService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final Logger logger = Logger.getLogger(getClass().getName());
-    private final TokenGenerator tokenGenerator;
+    private final UserTokenAuthMap userTokenAuthMap;
 
     @Autowired
     public AuthenticationService(UserService userService,
                                  PasswordEncoder passwordEncoder,
-                                 TokenGenerator tokenGenerator) {
+                                 UserTokenAuthMap userTokenAuthMap) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.tokenGenerator = tokenGenerator;
+        this.userTokenAuthMap = userTokenAuthMap;
     }
 
     public Map<String, Object> authenticate(User user){
@@ -36,7 +35,7 @@ public class AuthenticationService {
             boolean matches = passwordEncoder.matches(user.getPassword(), userDB.getPassword());
 
             if(matches && userDB.isEnabled()){
-                return createTokenUserResponse(userDB, tokenGenerator.generateToken(user));
+                return userTokenAuthMap.createUserTokenMap(userDB);
             }
 
         }catch (UserNotFoundException e){
@@ -44,12 +43,5 @@ public class AuthenticationService {
         }
 
         return null;
-    }
-
-    private Map<String, Object> createTokenUserResponse(User authenticatedUser, String token){
-        Map<String,Object> auth = new HashMap<>();
-        auth.put("user", authenticatedUser);
-        auth.put("token", token);
-        return auth;
     }
 }

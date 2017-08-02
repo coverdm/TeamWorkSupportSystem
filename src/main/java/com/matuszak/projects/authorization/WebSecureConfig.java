@@ -45,4 +45,9 @@ public class WebSecureConfig extends WebSecurityConfigurerAdapter {
     public TokenGenerator tokenGenerator(){
         return new TokenGenerator();
     }
+
+    @Bean
+    public UserTokenAuthMap userTokenAuthMap(){
+        return new UserTokenAuthMap(tokenGenerator());
+    }
 }
