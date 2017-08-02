@@ -14,6 +14,14 @@
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
+.idea
+META-INF
+target
+
+TeamWorkSystem.iml
+teamworksystem.iml
+replay_pid23473.log
+hs_err_pid23473.log
 
 # Gradle:
 .idea/**/gradle.xml
