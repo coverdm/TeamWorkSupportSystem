@@ -8,8 +8,12 @@ import java.util.Optional;
 public interface ProjectService {
 
     List<Project> getProjects();
-    Project saveProject(Project project);
     List<Project> getProjectsByOwnerUsername(String username);
+
+    Project saveProject(Project project);
     Project addParticipants(String uuid, List<User> users);
-    Optional<Project> getProjectByUUID(String uuid);
+    Project getProjectByUUID(String uuid);
+
+    Project finishProject(String uuid);
+    Project changeStatus(String uuid, ProjectStatus status);
 }
