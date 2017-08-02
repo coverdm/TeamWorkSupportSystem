@@ -12,10 +12,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Created by dawid on 16.02.17.
- */
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthorizationController {
@@ -32,13 +28,13 @@ public class AuthorizationController {
 
     @PostMapping(value = "/login")
     public ResponseEntity<Map<String, Object>> authenticate(@RequestBody User user, HttpServletResponse response) throws IOException {
-        logger.info(user.getUsername() + " " + user.getPassword());
-        return new ResponseEntity<>(authenticationService.authenticate(user, response), HttpStatus.ACCEPTED);
+        logger.info("Username: " + user.getUsername());
+        return new ResponseEntity<>(authenticationService.authenticate(user), HttpStatus.ACCEPTED);
     }
 
     @PostMapping(value = "/register")
     public ResponseEntity<?> register(@RequestBody User user){
         userService.saveUser(user);
-        return new ResponseEntity<Object>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

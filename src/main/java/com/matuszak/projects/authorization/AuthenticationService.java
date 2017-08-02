@@ -1,55 +1,52 @@
 package com.matuszak.projects.authorization;
 
 import com.matuszak.projects.user.User;
+import com.matuszak.projects.user.UserNotFoundException;
 import com.matuszak.projects.user.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.logging.Logger;
 
-/**
- * Created by dawid on 04.04.17.
- */
 @Service
 public class AuthenticationService {
 
-    private UserService userService;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
     private static final String SECRET_KEY = "MyOwnSecretKey";
 
     @Autowired
-    public AuthenticationService(final UserService userService) {
+    public AuthenticationService(final UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Map<String, Object> authenticate(User user, HttpServletResponse response){
+    public Map<String, Object> authenticate(User user){
 
-        Optional<User> userByUsername = userService.getUserByUsername(user.getUsername());
+        try{
+            User userDB = userService.getUserByUsername(user.getUsername());
 
-        if(userByUsername.isPresent()){
-            User userDB = userByUsername.get();
+            boolean matches = passwordEncoder.matches(user.getPassword(), userDB.getPassword());
 
-            if(isUserValid(user, userDB)){
+            if(matches && userDB.isEnabled()){
                 return authentication(userDB, generateToken(userDB));
             }
-            return null;
+
+        }catch (UserNotFoundException e){
+            e.printStackTrace();
         }
 
         return null;
     }
 
-    private boolean isUserValid(User user, User authUser) {
-        return authUser != null && isPasswordValid(user, authUser) && authUser.isEnabled();
-    }
-
-    private boolean isPasswordValid(User user, User authUser) {
-        return authUser.getPassword().equals(user.getPassword());
-    }
 
     private String generateToken(User user){
         return Jwts.builder()
