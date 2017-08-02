@@ -1,10 +1,12 @@
 package com.matuszak.projects.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -25,8 +27,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserByUsername(String username){
-        return userRepository.findUserByUsername(username);
+    public User getUserByUsername(String username) throws UserNotFoundException{
+        return userRepository.findUserByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override
@@ -40,7 +42,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User changePassword(String newPassword) {
+
+        User userDB = getUserByUsername(getLoggedUser());
+
+        String encode = new StandardPasswordEncoder().encode(newPassword);
+
+        userDB.setPassword(encode);
+
+        return userDB;
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+
+    private String getLoggedUser(){
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }
