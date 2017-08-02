@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * Created by dawid on 26.06.17.
- */
 @RestController
 @RequestMapping("/api/project")
 public class ProjectController {
@@ -29,19 +26,19 @@ public class ProjectController {
         return new ResponseEntity<>(this.projectService.saveProject(project),HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/{uuid}")
+    public ResponseEntity<Project> getProject(@PathVariable("uuid") String uuid){
+        return new ResponseEntity<>(projectService.getProjectByUUID(uuid), HttpStatus.ACCEPTED);
+    }
+
     @PostMapping("/{uuid}/addParticipants")
     public ResponseEntity<?> addParticipant(@RequestBody List<User> user, @PathVariable String uuid){
         projectService.addParticipants(uuid, user);
-        return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
-    }
-
-    @GetMapping("/{uuid}")
-    public ResponseEntity<Project> getProject(@PathVariable("uuid") String uuid){
-        return new ResponseEntity<Project>(projectService.getProjectByUUID(uuid).get(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/getAllProjects")
     public ResponseEntity<List<Project>> getAllProjects(){
-        return new ResponseEntity<List<Project>>(this.projectService.getProjects(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(this.projectService.getProjects(), HttpStatus.ACCEPTED);
     }
 }
