@@ -134,25 +134,6 @@ public class ProjectPersistenceTest {
     }
 
     @Test
-    public void should_Add_New_Participants(){
-
-        // given
-        String uuid = project1.getUuid();
-        Optional<Project> project = Optional.of(project1);
-        List<User> newParticipants = Arrays.asList(user1, user2);
-
-        when(projectRepository.getProjectByUuid(uuid)).thenReturn(project);
-
-        when(projectRepository.save(project1)).thenReturn(project1);
-
-        // when
-        Project updatedProject = projectPersistence.addParticipants(uuid, newParticipants);
-
-        // then
-        Assertions.assertThat(project1).isEqualToComparingFieldByField(updatedProject);
-    }
-
-    @Test
     public void shouldThrowAnExceptionWhenProjectHadBeenNotFound(){
 
         //given
@@ -206,26 +187,4 @@ public class ProjectPersistenceTest {
                 .isNotNull()
                 .isNotEmpty();
     }
-
-    @Test
-    public void shouldChangeProjectsStatus(){
-
-        //given
-        Optional<Project> project = Optional.of(this.project1);
-        String uuid = this.project1.getUuid();
-
-        when(projectRepository.save(this.project1)).thenReturn(this.project1);
-        when(projectRepository.getProjectByUuid(uuid)).thenReturn(project);
-
-        //when
-        Project updatedProject = projectPersistence.changeStatus(uuid, ProjectStatus.FINISHED);
-
-        //then
-        Assertions.assertThat(updatedProject.getStatus()).isEqualTo(ProjectStatus.FINISHED);
-    }
-
-//    @PropertySource("classpath:test.properties")
-//    @Configuration
-//    protected static class TestConfiguration{}
-
 }
