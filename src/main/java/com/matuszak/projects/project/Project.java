@@ -48,8 +48,6 @@ public class Project implements Serializable{
     @NotNull
     private LocalDate createdDate;
 
-    private Double price;
-
     @NotEmpty
     @ElementCollection
     private List<ProgrammingLanguages> technologies;
