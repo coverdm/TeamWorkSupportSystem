@@ -14,11 +14,14 @@ import java.util.logging.Logger;
 public class ProjectController {
 
     private final ProjectPersistence projectPersistence;
+    private final ProjectManager projectManager;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public ProjectController(ProjectPersistence projectPersistence) {
+    public ProjectController(ProjectPersistence projectPersistence,
+                             ProjectManager projectManager) {
         this.projectPersistence = projectPersistence;
+        this.projectManager = projectManager;
     }
 
     @PostMapping("/create")
@@ -31,14 +34,14 @@ public class ProjectController {
         return new ResponseEntity<>(projectPersistence.getProjectByUUID(uuid), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/{uuid}/addParticipants")
-    public ResponseEntity<?> addParticipant(@RequestBody List<User> user, @PathVariable String uuid){
-        projectPersistence.addParticipants(uuid, user);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
     @GetMapping("/getAllProjects")
     public ResponseEntity<List<Project>> getAllProjects(){
         return new ResponseEntity<>(this.projectPersistence.getProjects(), HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/{uuid}/addParticipants")
+    public ResponseEntity<?> addParticipant(@RequestBody List<User> user, @PathVariable String uuid){
+        projectManager.addParticipants(uuid, user);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }
