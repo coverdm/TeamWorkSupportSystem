@@ -1,9 +1,10 @@
-package com.matuszak.projects.authorization;
+package com.matuszak.projects.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.filter.GenericFilterBean;
@@ -15,12 +16,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by dawid on 03.04.17.
- */
 public class JWTLogin extends GenericFilterBean {
 
     private static final String SECRET_KEY = "MyOwnSecretKey";
@@ -33,22 +30,25 @@ public class JWTLogin extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
 
-        if (authorization == null || !authorization.startsWith(TOKEN_PREFIX)) {
+        if (!isAuthorizationHeaderValid(authorization)) {
             ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        } else {
-
+        }
+        else{
             String token = extractToken(authorization);
 
             Claims claims = extractClaims(token);
 
-            List<SimpleGrantedAuthority> grantedAuthorities = Arrays.asList(new SimpleGrantedAuthority(extractAuthorities(claims)));
+            List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(extractAuthorities(claims));
 
             User user = new User(claims.getSubject(), "", grantedAuthorities);
 
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, "", grantedAuthorities));
-
-            filterChain.doFilter(servletRequest, servletResponse);
         }
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private boolean isAuthorizationHeaderValid(String authorization) {
+        return authorization != null || authorization.startsWith(TOKEN_PREFIX);
     }
 
     private String extractAuthorities(Claims claims) {
