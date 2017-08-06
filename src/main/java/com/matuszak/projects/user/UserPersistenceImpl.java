@@ -27,7 +27,8 @@ public class UserPersistenceImpl implements UserPersistence {
 
     @Override
     public User getUserByUsername(String username) throws UserNotFoundException{
-        return userRepository.findUserByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override
@@ -36,24 +37,8 @@ public class UserPersistenceImpl implements UserPersistence {
     }
 
     @Override
-    public User changePassword(String newPassword) {
-
-        User userDB = getUserByUsername(getLoggedUser());
-
-        String encode = new StandardPasswordEncoder().encode(newPassword);
-
-        userDB.setPassword(encode);
-
-        return userDB;
-    }
-
-    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-
-    private String getLoggedUser(){
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
 }
