@@ -1,4 +1,4 @@
-package com.matuszak.projects.authorization;
+package com.matuszak.projects.auth;
 
 import com.matuszak.projects.user.User;
 import io.jsonwebtoken.Jwts;

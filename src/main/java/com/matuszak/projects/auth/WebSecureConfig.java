@@ -1,4 +1,4 @@
-package com.matuszak.projects.authorization;
+package com.matuszak.projects.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
