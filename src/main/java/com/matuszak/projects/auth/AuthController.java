@@ -14,22 +14,22 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthenticationController {
+public class AuthController {
 
-    private final AuthenticationService authenticationService;
+    private final AuthService authService;
     private final UserPersistence userPersistence;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public AuthenticationController(AuthenticationService authenticationService, UserPersistence userPersistence) {
-        this.authenticationService = authenticationService;
+    public AuthController(AuthService authService, UserPersistence userPersistence) {
+        this.authService = authService;
         this.userPersistence = userPersistence;
     }
 
     @PostMapping(value = "/login")
     public ResponseEntity<Map<String, Object>> authenticate(@RequestBody User user, HttpServletResponse response) throws IOException {
         logger.info("Username: " + user.getUsername());
-        return new ResponseEntity<>(authenticationService.authenticate(user), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(authService.authenticate(user), HttpStatus.ACCEPTED);
     }
 
     @PostMapping(value = "/register")

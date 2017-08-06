@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 @Service
-public class AuthenticationService {
+public class AuthService {
 
     private final UserPersistence userPersistence;
     private final PasswordEncoder passwordEncoder;
@@ -18,9 +18,9 @@ public class AuthenticationService {
     private final UserTokenAuthMap userTokenAuthMap;
 
     @Autowired
-    public AuthenticationService(UserPersistence userPersistence,
-                                 PasswordEncoder passwordEncoder,
-                                 UserTokenAuthMap userTokenAuthMap) {
+    public AuthService(UserPersistence userPersistence,
+                       PasswordEncoder passwordEncoder,
+                       UserTokenAuthMap userTokenAuthMap) {
         this.userPersistence = userPersistence;
         this.passwordEncoder = passwordEncoder;
         this.userTokenAuthMap = userTokenAuthMap;
