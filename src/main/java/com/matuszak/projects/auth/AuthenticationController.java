@@ -1,4 +1,4 @@
-package com.matuszak.projects.authorization;
+package com.matuszak.projects.auth;
 
 import com.matuszak.projects.user.User;
 import com.matuszak.projects.user.UserPersistence;
@@ -14,14 +14,14 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthorizationController {
+public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final UserPersistence userPersistence;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public AuthorizationController(AuthenticationService authenticationService,UserPersistence userPersistence) {
+    public AuthenticationController(AuthenticationService authenticationService, UserPersistence userPersistence) {
         this.authenticationService = authenticationService;
         this.userPersistence = userPersistence;
     }

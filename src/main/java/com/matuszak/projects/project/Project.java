@@ -1,6 +1,6 @@
 package com.matuszak.projects.project;
 
-import com.matuszak.projects.util.ProgrammingLanguages;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.matuszak.projects.task.Task;
 import com.matuszak.projects.user.User;
 import lombok.AllArgsConstructor;
@@ -48,13 +48,11 @@ public class Project implements Serializable{
     @NotNull
     private LocalDate createdDate;
 
-    @NotEmpty
-    @ElementCollection
-    private List<ProgrammingLanguages> technologies;
-
     @ManyToMany
+    @JsonIgnoreProperties("projects")
     private List<User> participants;
 
+    @JsonIgnoreProperties
     @OneToMany(mappedBy = "employee")
     private List<Task> tasks;
 }

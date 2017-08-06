@@ -24,11 +24,6 @@ public class Task implements Serializable {
     private long id;
 
     @OneToOne
-    @JoinColumn(name = "owner_Id")
-    @NotNull
-    private User owner;
-
-    @OneToOne
     @JoinColumn(name = "employee_Id")
     @NotNull
     private User employee;

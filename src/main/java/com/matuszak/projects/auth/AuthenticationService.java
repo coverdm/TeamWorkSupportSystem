@@ -1,7 +1,6 @@
-package com.matuszak.projects.authorization;
+package com.matuszak.projects.auth;
 
 import com.matuszak.projects.user.User;
-import com.matuszak.projects.user.UserNotFoundException;
 import com.matuszak.projects.user.UserPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,17 +28,12 @@ public class AuthenticationService {
 
     public Map<String, Object> authenticate(User user){
 
-        try{
-            User userDB = userPersistence.getUserByUsername(user.getUsername());
+        User userDB = userPersistence.getUserByUsername(user.getUsername());
 
-            boolean matches = passwordEncoder.matches(user.getPassword(), userDB.getPassword());
+        boolean matches = passwordEncoder.matches(user.getPassword(), userDB.getPassword());
 
-            if(matches && userDB.isEnabled()){
-                return userTokenAuthMap.createUserTokenMap(userDB);
-            }
-
-        }catch (UserNotFoundException e){
-            e.printStackTrace();
+        if(matches && userDB.isEnabled()){
+            return userTokenAuthMap.createUserTokenMap(userDB);
         }
 
         return null;

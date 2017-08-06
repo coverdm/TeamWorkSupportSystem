@@ -2,7 +2,6 @@ package com.matuszak.projects.project;
 
 import com.matuszak.projects.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,45 +14,35 @@ import java.util.logging.Logger;
 public class ProjectManager {
 
     private final ProjectPersistence projectPersistence;
+    private final ProjectCreator projectCreator;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public ProjectManager(ProjectPersistence projectPersistence) {
+    public ProjectManager(ProjectPersistence projectPersistence, ProjectCreator projectCreator) {
         this.projectPersistence = projectPersistence;
+        this.projectCreator = projectCreator;
     }
 
-    public Project finishProject(String projectUUID){
+    public Project changeStatus(String projectUUID, ProjectStatus status) {
 
-        Project project = null;
-
-        try{
-
-            project = this.projectPersistence.getProjectByUUID(projectUUID);
-            project.setStatus(ProjectStatus.FINISHED);
-
-        }catch (ProjectNotFoundException e){
-            e.printStackTrace();
-        }
+        Project project = this.projectPersistence.getProjectByUUID(projectUUID);
+        project.setStatus(status);
 
         return project;
     }
 
-    public Project addParticipants(String projectUUID, List<User> candidates){
+    public Project addParticipants(String projectUUID, List<User> candidates) {
 
-        Project project = null;
+        Project project = this.projectPersistence.getProjectByUUID(projectUUID);
+        List<User> participants = project.getParticipants();
+        candidates.forEach(participants::add);
 
-        try{
-
-            project = this.projectPersistence.getProjectByUUID(projectUUID);
-            List<User> participants = project.getParticipants();
-            candidates.forEach(participants::add);
-
-            logger.info("Added participants: " + candidates.toString() + " to project: " + projectUUID);
-
-        }catch(ProjectNotFoundException e){
-            e.printStackTrace();
-        }
+        logger.info("Added participants: " + candidates.toString() + " to project: " + projectUUID);
 
         return this.projectPersistence.saveProject(project);
+    }
+
+    public Project create(Project project) {
+        return projectPersistence.saveProject(projectCreator.create(project));
     }
 }

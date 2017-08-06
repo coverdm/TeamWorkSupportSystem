@@ -1,8 +1,10 @@
 package com.matuszak.projects.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.matuszak.projects.project.Project;
-import com.matuszak.projects.util.ProgrammingLanguages;
-import com.matuszak.projects.authorization.Role;
+import com.matuszak.projects.auth.Role;
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -47,8 +49,16 @@ public class User implements Serializable{
     private String lastName;
 
     @ManyToMany(mappedBy = "participants")
+    @JsonIgnoreProperties("participants")
     private List<Project> projects;
 
-    @ElementCollection
-    private List<ProgrammingLanguages> experience;
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

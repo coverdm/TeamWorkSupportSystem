@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -21,20 +22,21 @@ public class ProjectCreator {
         this.userPersistence = userPersistence;
     }
 
-    public Project create(Project project){
+    public Project create(Project project) {
 
         User owner = userPersistence.getUserByUsername(getLoggedUsername());
-
-        project.setUuid(UUID.randomUUID().toString());
-
         project.setOwner(owner);
-
-        project.setCreatedDate(LocalDate.now());
-
-        logger.info("Created project: " + project.toString());
+        init(project);
 
         return project;
 
+    }
+
+    private void init(Project project) {
+        project.setUuid(UUID.randomUUID().toString());
+        project.setCreatedDate(LocalDate.now());
+        project.setParticipants(new ArrayList<>());
+        project.setTasks(new ArrayList<>());
     }
 
     private String getLoggedUsername() {
