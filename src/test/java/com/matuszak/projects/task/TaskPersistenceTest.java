@@ -2,13 +2,15 @@ package com.matuszak.projects.task;
 
 import com.matuszak.projects.Application;
 import com.matuszak.projects.TestConfiguration;
-import com.matuszak.projects.authorization.Role;
-import com.matuszak.projects.project.Project;
-import com.matuszak.projects.project.ProjectRepository;
-import com.matuszak.projects.project.ProjectPersistence;
-import com.matuszak.projects.project.ProjectStatus;
-import com.matuszak.projects.user.User;
-import com.matuszak.projects.util.ProgrammingLanguages;
+import com.matuszak.projects.auth.util.Role;
+import com.matuszak.projects.project.entity.Project;
+import com.matuszak.projects.project.repository.ProjectRepository;
+import com.matuszak.projects.project.service.ProjectPersistence;
+import com.matuszak.projects.project.entity.ProjectStatus;
+import com.matuszak.projects.task.entity.Task;
+import com.matuszak.projects.task.repository.TaskRepository;
+import com.matuszak.projects.task.service.TaskPersistence;
+import com.matuszak.projects.user.entity.User;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,7 +50,6 @@ public class TaskPersistenceTest {
                 .password("somePassword")
                 .userRole(Role.USER)
                 .email("someEmail@gmail.com")
-                .experience(Arrays.asList(ProgrammingLanguages.JAVA, ProgrammingLanguages.PHP))
                 .enabled(true)
                 .firstName("someFirstName")
                 .lastName("someLastName")
@@ -60,7 +60,6 @@ public class TaskPersistenceTest {
                 .password("2Password")
                 .userRole(Role.USER)
                 .email("s2mail@gmail.com")
-                .experience(Arrays.asList(ProgrammingLanguages.JAVA, ProgrammingLanguages.PHP))
                 .enabled(true)
                 .firstName("someF2stName")
                 .lastName("som2tName")
@@ -71,7 +70,6 @@ public class TaskPersistenceTest {
                 .uuid(UUID.randomUUID().toString())
                 .owner(user)
                 .participants(new ArrayList<>())
-                .technologies(null)
                 .description("someDescription")
                 .createdDate(LocalDate.now())
                 .status(ProjectStatus.FINISHED)
@@ -80,7 +78,6 @@ public class TaskPersistenceTest {
         Task firstTask = Task.builder()
                 .deadline(LocalDate.now())
                 .description("First task")
-                .owner(user)
                 .employee(user2)
                 .build();
 

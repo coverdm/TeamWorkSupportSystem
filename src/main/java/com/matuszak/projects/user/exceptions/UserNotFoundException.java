@@ -1,0 +1,16 @@
+package com.matuszak.projects.user.exceptions;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "no a such user")
+public class UserNotFoundException extends RuntimeException {
+
+    public UserNotFoundException(String s) {
+        super(s);
+    }
+
+    public UserNotFoundException(String s, Throwable throwable) {
+        super(s, throwable);
+    }
+}

@@ -2,11 +2,14 @@ package com.matuszak.projects.project;
 
 import com.matuszak.projects.Application;
 import com.matuszak.projects.TestConfiguration;
-import com.matuszak.projects.authorization.Role;
-import com.matuszak.projects.user.User;
-import com.matuszak.projects.user.UserRepository;
-import com.matuszak.projects.user.UserPersistence;
-import com.matuszak.projects.util.ProgrammingLanguages;
+import com.matuszak.projects.auth.util.Role;
+import com.matuszak.projects.project.entity.Project;
+import com.matuszak.projects.project.entity.ProjectStatus;
+import com.matuszak.projects.project.exceptions.ProjectNotFoundException;
+import com.matuszak.projects.project.repository.ProjectRepository;
+import com.matuszak.projects.project.service.ProjectPersistence;
+import com.matuszak.projects.user.entity.User;
+import com.matuszak.projects.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +36,6 @@ public class ProjectPersistenceTest {
     @MockBean private ProjectRepository projectRepository;
     @MockBean private UserRepository userRepository;
 
-    @Autowired private UserPersistence userPersistence;
     @Autowired private ProjectPersistence projectPersistence;
     @Autowired private AuthenticationManager authenticationManager;
 
@@ -56,7 +58,6 @@ public class ProjectPersistenceTest {
                 .password("somePassword")
                 .userRole(Role.USER)
                 .email("someEmail@gmail.com")
-                .experience(Arrays.asList(ProgrammingLanguages.JAVA, ProgrammingLanguages.PHP))
                 .enabled(true)
                 .firstName("someFirstName")
                 .lastName("someLastName")
@@ -67,7 +68,6 @@ public class ProjectPersistenceTest {
                 .password("2Password")
                 .userRole(Role.USER)
                 .email("s2mail@gmail.com")
-                .experience(Arrays.asList(ProgrammingLanguages.JAVA, ProgrammingLanguages.PHP))
                 .enabled(true)
                 .firstName("someF2stName")
                 .lastName("som2tName")
@@ -78,7 +78,6 @@ public class ProjectPersistenceTest {
                 .uuid(UUID.randomUUID().toString())
                 .owner(this.user1)
                 .participants(new ArrayList<>())
-                .technologies(null)
                 .description("someDescription")
                 .createdDate(LocalDate.now())
                 .status(ProjectStatus.FINISHED)
@@ -89,7 +88,6 @@ public class ProjectPersistenceTest {
                 .uuid(UUID.randomUUID().toString())
                 .owner(this.user2)
                 .participants(new ArrayList<>())
-                .technologies(null)
                 .createdDate(LocalDate.now())
                 .status(ProjectStatus.OPEN)
                 .description("Second description for project")
@@ -103,7 +101,7 @@ public class ProjectPersistenceTest {
     }
 
     @Test
-    public void should_Return_Only_Owned_Projects(){
+    public void shouldReturnOnlyOwnedProjects(){
 
         //given
         List<Project> projects = Arrays.asList(this.project1);
@@ -119,7 +117,7 @@ public class ProjectPersistenceTest {
     }
 
     @Test
-    public void should_Return_List_Of_Projects(){
+    public void shouldReturnListOfProjects(){
 
         //given
         List<Project> projects = Arrays.asList(this.project1, this.project2);

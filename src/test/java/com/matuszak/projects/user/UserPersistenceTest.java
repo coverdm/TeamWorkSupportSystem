@@ -2,8 +2,10 @@ package com.matuszak.projects.user;
 
 import com.matuszak.projects.Application;
 import com.matuszak.projects.TestConfiguration;
-import com.matuszak.projects.authorization.Role;
-import com.matuszak.projects.util.ProgrammingLanguages;
+import com.matuszak.projects.auth.util.Role;
+import com.matuszak.projects.user.entity.User;
+import com.matuszak.projects.user.repository.UserRepository;
+import com.matuszak.projects.user.service.UserPersistence;
 import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -22,7 +23,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {Application.class, TestConfiguration.class})
 public class UserPersistenceTest {
 
-    @MockBean UserRepository userRepository;
+    @MockBean
+    UserRepository userRepository;
     @Autowired
     UserPersistence userPersistence;
 
@@ -35,7 +37,6 @@ public class UserPersistenceTest {
                 .password("7B7BC2512EE1FEDCD76BDC68926D4F7B")
                 .email("email@email.com")
                 .enabled(true)
-                .experience(Arrays.asList(ProgrammingLanguages.JAVA))
                 .firstName("fname")
                 .lastName("lname")
                 .projects(null)
@@ -47,7 +48,6 @@ public class UserPersistenceTest {
                 .password("127EDFR12EE15631D76B2368926D4F4B")
                 .email("sec@email.com")
                 .enabled(true)
-                .experience(Arrays.asList(ProgrammingLanguages.JAVA))
                 .firstName("fsname")
                 .lastName("lsname")
                 .projects(null)
