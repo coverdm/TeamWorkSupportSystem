@@ -1,8 +1,8 @@
 package com.matuszak.projects.auth.config;
 
-import com.matuszak.projects.auth.service.JWTLogin;
-import com.matuszak.projects.auth.util.TokenGenerator;
-import com.matuszak.projects.auth.util.UserTokenAuthMap;
+import com.matuszak.projects.auth.jwt.JwtFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,7 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class WebSecureConfig extends WebSecurityConfigurerAdapter {
+
+    private final JwtFilter jwtFilter;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -31,26 +34,26 @@ public class WebSecureConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .anyRequest().fullyAuthenticated()
+                .anyRequest()
+                .fullyAuthenticated()
                 .and()
-                .addFilterBefore(new JWTLogin(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean(){
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setEnabled(false);
+        filterRegistrationBean.setFilter(jwtFilter);
+        return filterRegistrationBean;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public TokenGenerator tokenGenerator(){
-        return new TokenGenerator();
-    }
-
-    @Bean
-    public UserTokenAuthMap userTokenAuthMap(){
-        return new UserTokenAuthMap(tokenGenerator());
     }
 }
