@@ -5,6 +5,8 @@ import com.matuszak.projects.project.service.ProjectManager;
 import com.matuszak.projects.project.service.ProjectPersistence;
 import com.matuszak.projects.project.entity.ProjectStatus;
 import com.matuszak.projects.user.entity.User;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,19 +16,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
+@RequiredArgsConstructor
+@Log
 @RequestMapping("/api/project")
 public class ProjectController {
 
     private final ProjectPersistence projectPersistence;
     private final ProjectManager projectManager;
-    private final Logger logger = Logger.getLogger(getClass().getName());
-
-    @Autowired
-    public ProjectController(ProjectPersistence projectPersistence,
-                             ProjectManager projectManager) {
-        this.projectPersistence = projectPersistence;
-        this.projectManager = projectManager;
-    }
 
     @PostMapping("/create")
     public ResponseEntity<Project> createProject(@RequestBody Project project){
@@ -52,14 +48,5 @@ public class ProjectController {
     @PostMapping("/{uuid}/status")
     public ResponseEntity<Project> changeStatus(@PathVariable String uuid, @RequestBody ProjectStatus status){
         return new ResponseEntity<>(projectManager.changeStatus(uuid, status), HttpStatus.ACCEPTED);
-    }
-
-    @PostMapping("/testing")
-    public ResponseEntity<?> testing(@RequestBody Project project){
-
-//        EntityToDTOMapper mapper = new ProjectToDTOMapper();
-//        ProjectDTO maper = (ProjectDTO) mapper.map(project);
-
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

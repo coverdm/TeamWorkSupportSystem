@@ -1,27 +1,25 @@
 package com.matuszak.projects.auth.util;
 
+import com.matuszak.projects.auth.jwt.JwtBuilder;
 import com.matuszak.projects.user.entity.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
+@RequiredArgsConstructor
 public class UserTokenAuthMap {
 
-    private final Map<String,Object> userTokenAuth;
-    private final TokenGenerator tokenGenerator;
-
-    public UserTokenAuthMap(TokenGenerator tokenGenerator) {
-        this.tokenGenerator = tokenGenerator;
-        this.userTokenAuth = new HashMap<>();
-    }
+    private final JwtBuilder jwtBuilder;
 
     public Map<String, Object> createUserTokenMap(User authenticatedUser){
 
-        if(!userTokenAuth.isEmpty())
-            userTokenAuth.clear();
+        Map<String, Object> userTokenAuth = new HashMap<>();
 
         userTokenAuth.put("user", authenticatedUser);
-        userTokenAuth.put("token", tokenGenerator.generateToken(authenticatedUser));
+        userTokenAuth.put("token", jwtBuilder.generateToken(authenticatedUser));
 
         return userTokenAuth;
     }

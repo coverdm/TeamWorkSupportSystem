@@ -3,6 +3,8 @@ package com.matuszak.projects.project.service;
 import com.matuszak.projects.project.exceptions.ProjectNotFoundException;
 import com.matuszak.projects.project.repository.ProjectRepository;
 import com.matuszak.projects.project.entity.Project;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,15 +12,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Service
+@RequiredArgsConstructor
+@Log
 public class ProjectPersistenceImpl implements ProjectPersistence {
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
     private final ProjectRepository projectRepository;
-
-    @Autowired
-    public ProjectPersistenceImpl(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-    }
 
     @Override
     public List<Project> getProjects() {

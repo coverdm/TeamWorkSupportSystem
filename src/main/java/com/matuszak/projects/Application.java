@@ -8,11 +8,13 @@ import com.matuszak.projects.task.entity.Task;
 import com.matuszak.projects.task.repository.TaskRepository;
 import com.matuszak.projects.user.entity.User;
 import com.matuszak.projects.user.repository.UserRepository;
+import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,19 +30,26 @@ import java.util.UUID;
 @EnableWebMvc
 @EnableAutoConfiguration
 @ComponentScan
+@Log
 public class Application{
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
+    private final ApplicationContext applicationContext;
 
     @Autowired
-    public Application(UserRepository userRepository, ProjectRepository projectRepository, PasswordEncoder passwordEncoder, TaskRepository taskRepository) {
+    public Application(UserRepository userRepository,
+                       ProjectRepository projectRepository,
+                       PasswordEncoder passwordEncoder,
+                       TaskRepository taskRepository,
+                       ApplicationContext applicationContext) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.passwordEncoder = passwordEncoder;
         this.taskRepository = taskRepository;
+        this.applicationContext = applicationContext;
     }
 
     @Bean
@@ -50,7 +59,6 @@ public class Application{
 
     @PostConstruct
     public void setUpDatabase(){
-
 
         User user = User.builder()
                 .username("user")
@@ -72,6 +80,16 @@ public class Application{
                 .lastName("replay")
                 .build();
 
+        User disabledUser = User.builder()
+                .username("diss")
+                .password(passwordEncoder.encode("disableed"))
+                .enabled(false)
+                .email("emailed@emial.com")
+                .userRole(Role.USER)
+                .firstName("klaudia")
+                .lastName("janosik")
+                .build();
+
         Project project = Project.builder()
                 .name("someProject")
                 .uuid(UUID.randomUUID().toString())
@@ -91,7 +109,7 @@ public class Application{
 
         project.getTasks().add(task);
 
-        this.userRepository.save(Arrays.asList(user,participant));
+        this.userRepository.save(Arrays.asList(user,participant,disabledUser));
         this.taskRepository.save(task);
         this.projectRepository.save(project);
     }

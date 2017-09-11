@@ -5,23 +5,22 @@ import com.matuszak.projects.project.service.ProjectPersistence;
 import com.matuszak.projects.task.exceptions.TaskNotFoundException;
 import com.matuszak.projects.task.repository.TaskRepository;
 import com.matuszak.projects.task.entity.Task;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Log
+@RequiredArgsConstructor
 public class TaskPersistenceImpl implements TaskPersistence {
 
     private final TaskRepository taskRepository;
     private final ProjectPersistence projectPersistence;
-
-    @Autowired
-    public TaskPersistenceImpl(TaskRepository taskRepository, ProjectPersistence projectPersistence) {
-        this.taskRepository = taskRepository;
-        this.projectPersistence = projectPersistence;
-    }
 
     @Override
     public Task create(String projectUUID, Task task) {
@@ -41,9 +40,8 @@ public class TaskPersistenceImpl implements TaskPersistence {
     }
 
     @Override
-    public Task getTaskById(Long id) {
-        return taskRepository.getTaskById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task does not exists"));
+    public Optional<Task> getTaskById(Long id) {
+        return Optional.ofNullable(taskRepository.findOne(id));
     }
 
     @Override

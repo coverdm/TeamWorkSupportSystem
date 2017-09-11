@@ -1,12 +1,16 @@
-package com.matuszak.projects.auth.util;
+package com.matuszak.projects.auth.jwt;
 
 import com.matuszak.projects.user.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-public class TokenGenerator {
+@Component
+@RequiredArgsConstructor
+public class JwtBuilder {
 
     private static final String SECRET_KEY = "MyOwnSecretKey";
 
@@ -23,3 +27,4 @@ public class TokenGenerator {
         return new Date(System.currentTimeMillis() + 100000);
     }
 }
+

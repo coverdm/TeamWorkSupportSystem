@@ -2,6 +2,8 @@ package com.matuszak.projects.task.controller;
 
 import com.matuszak.projects.task.service.TaskPersistence;
 import com.matuszak.projects.task.entity.Task;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +13,11 @@ import java.util.List;
 
 @RequestMapping("/api/{projectUUID}/task")
 @RestController
+@RequiredArgsConstructor
+@Log
 public class TaskController {
 
     private final TaskPersistence taskPersistence;
-
-    @Autowired
-    public TaskController(TaskPersistence taskPersistence) {
-        this.taskPersistence = taskPersistence;
-    }
 
     @GetMapping("/get")
     public ResponseEntity<List<Task>> listOfTask(@PathVariable String projectUUID){
@@ -28,8 +27,9 @@ public class TaskController {
     @GetMapping("/{taskID}/remove")
     public ResponseEntity<?> removeTask(@PathVariable String taskID){
 
-        Task taskById = taskPersistence.getTaskById(Long.parseLong(taskID));
-        taskPersistence.delete(taskById);
+        taskPersistence.getTaskById(Long.parseLong(taskID))
+                .ifPresent(e -> taskPersistence.delete(e));
+
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
