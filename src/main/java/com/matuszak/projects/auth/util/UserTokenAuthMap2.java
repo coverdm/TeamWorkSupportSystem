@@ -1,7 +1,7 @@
 package com.matuszak.projects.auth.util;
 
-import com.matuszak.projects.auth.jwt.JwtBuilder;
-import com.matuszak.projects.user.entity.User;
+import com.matuszak.projects.auth.jwt.JwtBuilder2;
+import com.matuszak.projects.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Component;
@@ -9,16 +9,16 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Log
 @Component
 @RequiredArgsConstructor
-public class UserTokenAuthMap {
+@Log
+public class UserTokenAuthMap2 {
 
-    private final JwtBuilder jwtBuilder;
+    private final JwtBuilder2 jwtBuilder;
 
-    public Map<String, Object> createUserTokenMap(User authenticatedUser){
+    public Map<String, Object> createUserTokenMap(UserDTO authenticatedUser){
 
-        log.info("Creating response...");
+        log.info("Building response...");
 
         Map<String, Object> userTokenAuth = new HashMap<>();
 
@@ -27,4 +27,5 @@ public class UserTokenAuthMap {
 
         return userTokenAuth;
     }
+
 }

@@ -2,7 +2,7 @@
 //
 //import com.matuszak.projects.Application;
 //import com.matuszak.projects.TestConfiguration;
-//import com.matuszak.projects.auth.util.Role;
+//import com.matuszak.projects.auth.util.SecurityRole;
 //import com.matuszak.projects.project.entity.Project;
 //import com.matuszak.projects.project.entity.ProjectStatus;
 //import com.matuszak.projects.project.exceptions.ProjectNotFoundException;
@@ -56,7 +56,7 @@
 //        this.user1 = User.builder()
 //                .username(this.authentication.getName())
 //                .password("somePassword")
-//                .userRole(Role.USER)
+//                .userSecurityRole(SecurityRole.USER)
 //                .email("someEmail@gmail.com")
 //                .enabled(true)
 //                .firstName("someFirstName")
@@ -66,7 +66,7 @@
 //        this.user2 = User.builder()
 //                .username("2Username")
 //                .password("2Password")
-//                .userRole(Role.USER)
+//                .userSecurityRole(SecurityRole.USER)
 //                .email("s2mail@gmail.com")
 //                .enabled(true)
 //                .firstName("someF2stName")

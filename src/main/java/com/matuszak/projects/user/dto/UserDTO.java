@@ -1,30 +1,46 @@
 package com.matuszak.projects.user.dto;
 
-public class UserDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.matuszak.projects.auth.util.SecurityRole;
+import com.matuszak.projects.project.entity.Project;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
+import java.util.List;
+
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@ToString
+@EqualsAndHashCode
+public class UserDTO{
+
+    private String email;
     private String username;
     private String password;
+    private String firstName;
+    private String lastName;
 
-    public UserDTO() {
-    }
+    private SecurityRole userSecurityRole;
 
-    public UserDTO(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+    private boolean isEnabled;
+    private boolean isCredentialsNonExpired;
+    private boolean isAccountNonExpired;
+    private boolean isAccountNonLocked;
+    private Collection<GrantedAuthority> authorities;
 
-    public String getUsername() {
-        return username;
-    }
+    @JsonIgnoreProperties("participants")
+    private List<Project> projects;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
-
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }

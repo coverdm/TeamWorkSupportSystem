@@ -12,7 +12,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @Log
 @RequiredArgsConstructor
@@ -24,12 +26,9 @@ public class JwtFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        Authentication authentication = jwtService.getAuthenticationFromRequest((HttpServletRequest) servletRequest);
+        jwtService.getAuthenticationFromRequest((HttpServletRequest) servletRequest)
+                .ifPresent(SecurityContextHolder.getContext()::setAuthentication);
 
-        if(authentication != null) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("Participant authenticated");
-        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

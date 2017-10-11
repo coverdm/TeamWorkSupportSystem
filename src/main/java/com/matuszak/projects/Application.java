@@ -1,6 +1,6 @@
 package com.matuszak.projects;
 
-import com.matuszak.projects.auth.util.Role;
+import com.matuszak.projects.auth.util.SecurityRole;
 import com.matuszak.projects.project.entity.Project;
 import com.matuszak.projects.project.repository.ProjectRepository;
 import com.matuszak.projects.project.entity.ProjectStatus;
@@ -8,13 +8,12 @@ import com.matuszak.projects.task.entity.Task;
 import com.matuszak.projects.task.repository.TaskRepository;
 import com.matuszak.projects.user.entity.User;
 import com.matuszak.projects.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,26 +30,13 @@ import java.util.UUID;
 @EnableAutoConfiguration
 @ComponentScan
 @Log
+@RequiredArgsConstructor
 public class Application{
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
-    private final ApplicationContext applicationContext;
-
-    @Autowired
-    public Application(UserRepository userRepository,
-                       ProjectRepository projectRepository,
-                       PasswordEncoder passwordEncoder,
-                       TaskRepository taskRepository,
-                       ApplicationContext applicationContext) {
-        this.userRepository = userRepository;
-        this.projectRepository = projectRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.taskRepository = taskRepository;
-        this.applicationContext = applicationContext;
-    }
 
     @Bean
     public ModelMapper modelMapper(){
@@ -65,9 +51,7 @@ public class Application{
                 .password(passwordEncoder.encode("user"))
                 .enabled(true)
                 .email("userowo@mobile.com")
-                .userRole(Role.USER)
-                .firstName("adam")
-                .lastName("nowak")
+                .securityRole(SecurityRole.USER)
                 .build();
 
         User participant = User.builder()
@@ -75,9 +59,7 @@ public class Application{
                 .password(passwordEncoder.encode("admin"))
                 .enabled(true)
                 .email("admin@admin.com")
-                .userRole(Role.ADMIN)
-                .firstName("dawid")
-                .lastName("replay")
+                .securityRole(SecurityRole.ADMIN)
                 .build();
 
         User disabledUser = User.builder()
@@ -85,9 +67,7 @@ public class Application{
                 .password(passwordEncoder.encode("disableed"))
                 .enabled(false)
                 .email("emailed@emial.com")
-                .userRole(Role.USER)
-                .firstName("klaudia")
-                .lastName("janosik")
+                .securityRole(SecurityRole.USER)
                 .build();
 
         Project project = Project.builder()

@@ -2,7 +2,7 @@ package com.matuszak.projects.task;
 
 import com.matuszak.projects.Application;
 import com.matuszak.projects.TestConfiguration;
-import com.matuszak.projects.auth.util.Role;
+import com.matuszak.projects.auth.util.SecurityRole;
 import com.matuszak.projects.project.entity.Project;
 import com.matuszak.projects.project.repository.ProjectRepository;
 import com.matuszak.projects.project.service.ProjectPersistence;
@@ -48,21 +48,17 @@ public class TaskPersistenceTest {
         User user = User.builder()
                 .username("firsUser")
                 .password("somePassword")
-                .userRole(Role.USER)
+                .securityRole(SecurityRole.USER)
                 .email("someEmail@gmail.com")
                 .enabled(true)
-                .firstName("someFirstName")
-                .lastName("someLastName")
                 .build();
 
         User user2 = User.builder()
                 .username("2Username")
                 .password("2Password")
-                .userRole(Role.USER)
+                .securityRole(SecurityRole.USER)
                 .email("s2mail@gmail.com")
                 .enabled(true)
-                .firstName("someF2stName")
-                .lastName("som2tName")
                 .build();
 
         Project project = Project.builder()

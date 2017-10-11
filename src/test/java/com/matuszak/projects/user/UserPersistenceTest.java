@@ -2,7 +2,7 @@
 //
 //import com.matuszak.projects.Application;
 //import com.matuszak.projects.TestConfiguration;
-//import com.matuszak.projects.auth.util.Role;
+//import com.matuszak.projects.auth.util.SecurityRole;
 //import com.matuszak.projects.user.entity.User;
 //import com.matuszak.projects.user.repository.UserRepository;
 //import com.matuszak.projects.user.service.UserPersistence;
@@ -40,7 +40,7 @@
 //                .firstName("fname")
 //                .lastName("lname")
 //                .projects(null)
-//                .userRole(Role.ADMIN)
+//                .userSecurityRole(SecurityRole.ADMIN)
 //                .build();
 //
 //        user2 = User.builder()
@@ -51,7 +51,7 @@
 //                .firstName("fsname")
 //                .lastName("lsname")
 //                .projects(null)
-//                .userRole(Role.USER)
+//                .userSecurityRole(SecurityRole.USER)
 //                .build();
 //
 //    }

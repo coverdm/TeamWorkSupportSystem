@@ -1,8 +1,9 @@
-package com.matuszak.projects.user.service;
+package com.matuszak.projects.user.service.impl;
 
 import com.matuszak.projects.user.repository.UserRepository;
 import com.matuszak.projects.user.entity.User;
 import com.matuszak.projects.user.exceptions.UserNotFoundException;
+import com.matuszak.projects.user.service.UserPersistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,6 @@ public class UserPersistenceImpl implements UserPersistence {
     @Override
     public void deleteUser(User user) {
         this.userRepository.delete(user);
+        log.info("Removed user: " + user.toString());
     }
 }

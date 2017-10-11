@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
 
+@Deprecated
 @Log
 @Service
 @RequiredArgsConstructor

@@ -27,6 +27,8 @@ public class JwtParser {
 
         log.info("Parsing token...");
 
+        log.info("Token: " + accessToken);
+
         String token = accessToken.replace(PREFIX_AUTHENTICATION, "");
 
         Claims claims = extractClaims(token);
