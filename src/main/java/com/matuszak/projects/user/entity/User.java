@@ -5,6 +5,7 @@ import com.matuszak.projects.project.entity.Project;
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -40,6 +41,9 @@ public class User implements UserDetails{
 
     @NotNull
     private boolean enabled;
+
+    @ElementCollection
+    private List<SimpleGrantedAuthority> authorities;
 
     @NotNull
     private boolean isAccountNonExpired;

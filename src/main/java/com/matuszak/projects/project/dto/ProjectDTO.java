@@ -1,12 +1,14 @@
 package com.matuszak.projects.project.dto;
 
 import com.matuszak.projects.project.entity.ProjectStatus;
+import com.matuszak.projects.user.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -18,6 +20,7 @@ public class ProjectDTO {
     private String name;
     private ProjectStatus status;
     private LocalDate createdDate;
+    private List<UserDTO> participants;
 
     public String getUuid() {
         return uuid;

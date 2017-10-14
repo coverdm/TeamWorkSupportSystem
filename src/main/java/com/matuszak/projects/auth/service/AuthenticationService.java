@@ -1,36 +1,39 @@
 package com.matuszak.projects.auth.service;
 
+import com.matuszak.projects.auth.domain.LoginModel;
 import com.matuszak.projects.auth.util.UserTokenAuthMap;
+import com.matuszak.projects.user.dto.UserDTO;
 import com.matuszak.projects.user.entity.User;
-import com.matuszak.projects.user.exceptions.UserNotFoundException;
-import com.matuszak.projects.user.service.UserPersistence;
+import com.matuszak.projects.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
 import java.util.Map;
-import java.util.Optional;
 
-@Deprecated
-@Log
-@Service
 @RequiredArgsConstructor
+@Service
+@Log
 public class AuthenticationService {
 
-    private final UserPersistence userPersistence;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final UserTokenAuthMap userTokenAuthMap;
+    private final ModelMapper modelMapper;
 
-    public Map<String, Object> authenticate(User user){
+    public Map<String, Object> authenticate(LoginModel loginModel) throws AuthenticationException {
 
-        log.info("Authenticating user...");
+        log.info("Authentication process...");
 
-        Optional<User> userDB = userPersistence.getUserByUsername(user.getUsername())
-                .filter(e -> passwordEncoder.matches(user.getPassword(), e.getPassword()))
-                .filter(e -> e.isEnabled());
+        UserDTO authenticatedUser = userService.getUserByEmail(loginModel.getEmail())
+                .filter(e -> passwordEncoder.matches(loginModel.getPassword(), e.getPassword()))
+                .filter(e -> e.isEnabled())
+                .map(e -> modelMapper.map(e, UserDTO.class))
+                .orElseThrow(AuthenticationException::new);
 
-        return userTokenAuthMap.createUserTokenMap(userDB.orElseThrow(() -> new UserNotFoundException("No a such user")));
+        return userTokenAuthMap.createUserTokenMap(authenticatedUser);
     }
 }

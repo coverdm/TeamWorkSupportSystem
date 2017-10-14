@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-@Deprecated
-public interface UserRepository extends JpaRepository<User, Long>{
-    User findUserByUsername(String username);
+public interface UserRepository extends JpaRepository<User, Long> {
+    User getUserByUsername(String username);
+    User getUserByEmail(String email);
 }

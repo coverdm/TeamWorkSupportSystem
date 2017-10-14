@@ -1,6 +1,7 @@
 package com.matuszak.projects.auth.util;
 
 import com.matuszak.projects.auth.jwt.JwtBuilder;
+import com.matuszak.projects.user.dto.UserDTO;
 import com.matuszak.projects.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -16,7 +17,7 @@ public class UserTokenAuthMap {
 
     private final JwtBuilder jwtBuilder;
 
-    public Map<String, Object> createUserTokenMap(User authenticatedUser){
+    public Map<String, Object> createUserTokenMap(UserDTO authenticatedUser){
 
         log.info("Creating response...");
 

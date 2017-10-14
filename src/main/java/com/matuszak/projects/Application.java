@@ -33,65 +33,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class Application{
 
-    private final UserRepository userRepository;
-    private final ProjectRepository projectRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final TaskRepository taskRepository;
-
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
-    }
-
-    @PostConstruct
-    public void setUpDatabase(){
-
-        User user = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("user"))
-                .enabled(true)
-                .email("userowo@mobile.com")
-                .securityRole(SecurityRole.USER)
-                .build();
-
-        User participant = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin"))
-                .enabled(true)
-                .email("admin@admin.com")
-                .securityRole(SecurityRole.ADMIN)
-                .build();
-
-        User disabledUser = User.builder()
-                .username("diss")
-                .password(passwordEncoder.encode("disableed"))
-                .enabled(false)
-                .email("emailed@emial.com")
-                .securityRole(SecurityRole.USER)
-                .build();
-
-        Project project = Project.builder()
-                .name("someProject")
-                .uuid(UUID.randomUUID().toString())
-                .owner(user)
-                .participants(Arrays.asList(participant))
-                .description("someDescription")
-                .createdDate(LocalDate.now())
-                .tasks(new ArrayList<>())
-                .status(ProjectStatus.FINISHED)
-                .build();
-
-        Task task = Task.builder()
-                .employee(user)
-                .description("Add new aspects")
-                .deadline(LocalDate.now())
-                .build();
-
-        project.getTasks().add(task);
-
-        this.userRepository.save(Arrays.asList(user,participant,disabledUser));
-        this.taskRepository.save(task);
-        this.projectRepository.save(project);
     }
 
     public static void main(String[] args) {

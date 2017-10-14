@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.matuszak.projects.auth.util.SecurityRole;
+import com.matuszak.projects.project.dto.ProjectDTO;
 import com.matuszak.projects.project.entity.Project;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,19 +23,11 @@ public class UserDTO{
     private String email;
     private String username;
     private String password;
-    private String firstName;
-    private String lastName;
 
     private SecurityRole userSecurityRole;
 
-    private boolean isEnabled;
-    private boolean isCredentialsNonExpired;
-    private boolean isAccountNonExpired;
-    private boolean isAccountNonLocked;
-    private Collection<GrantedAuthority> authorities;
-
     @JsonIgnoreProperties("participants")
-    private List<Project> projects;
+    private List<ProjectDTO> projects;
 
     @JsonIgnore
     public String getPassword() {
