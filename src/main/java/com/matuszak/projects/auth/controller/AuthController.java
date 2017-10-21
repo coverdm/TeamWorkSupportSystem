@@ -2,6 +2,7 @@ package com.matuszak.projects.auth.controller;
 
 import com.matuszak.projects.auth.domain.LoginModel;
 import com.matuszak.projects.auth.domain.RegisterModel;
+import com.matuszak.projects.auth.domain.Token;
 import com.matuszak.projects.auth.service.AuthenticationService;
 import com.matuszak.projects.auth.service.RegistrationProcess;
 import com.matuszak.projects.auth.exceptions.EmailAlreadyExistsException;
@@ -32,24 +33,21 @@ public class AuthController {
     private final ModelMapper modelMapper;
 
     @RequestMapping("/login")
-    public ResponseEntity<Map<String,Object>> login(@RequestBody LoginModel loginModel){
+    public ResponseEntity<Token> login(@RequestBody @Valid LoginModel loginModel){
 
         try {
-
-            Map<String, Object> authenticate = authenticationService.authenticate(loginModel);
-            return new ResponseEntity<>(authenticate, HttpStatus.OK);
-
+            Token token = authenticationService.performAuthentication(loginModel);
+            return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @RequestMapping("/register")
-    public ResponseEntity register(@Valid @RequestBody RegisterModel registerModel){
+    public ResponseEntity register(@RequestBody @Valid RegisterModel registerModel){
 
         try{
             User register = registrationProcess.register(registerModel);
-
             UserDTO userDTO = modelMapper.map(register, UserDTO.class);
 
             return new ResponseEntity(userDTO, HttpStatus.OK);

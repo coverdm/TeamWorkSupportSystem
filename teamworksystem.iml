@@ -3,9 +3,10 @@
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
       <configuration>
-        <fileset id="fileset" name="Spring Application Context" removed="false">
+        <fileset id="fileset" name="Spring Application Context v4" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/com/matuszak/projects/AppConfig.java</file>
           <file>file://$MODULE_DIR$/src/main/java/com/matuszak/projects/Application.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/com/matuszak/projects/authorization/WebSecureConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/matuszak/projects/auth/config/WebSecureConfig.java</file>
         </fileset>
       </configuration>
     </facet>

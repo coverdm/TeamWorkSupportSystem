@@ -1,4 +1,4 @@
-package com.matuszak.projects.conversation;
+package com.matuszak.projects.room;
 
 import com.matuszak.projects.user.entity.User;
 import lombok.AllArgsConstructor;

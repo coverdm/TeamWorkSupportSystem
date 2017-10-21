@@ -1,4 +1,4 @@
-package com.matuszak.projects.conversation;
+package com.matuszak.projects.room;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Conversation implements Serializable {
+public class Room implements Serializable {
 
     @Id
     @GeneratedValue

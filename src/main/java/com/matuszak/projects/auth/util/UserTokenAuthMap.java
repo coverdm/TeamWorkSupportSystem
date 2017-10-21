@@ -1,5 +1,6 @@
 package com.matuszak.projects.auth.util;
 
+import com.matuszak.projects.auth.domain.Token;
 import com.matuszak.projects.auth.jwt.JwtBuilder;
 import com.matuszak.projects.user.dto.UserDTO;
 import com.matuszak.projects.user.entity.User;
@@ -23,8 +24,11 @@ public class UserTokenAuthMap {
 
         Map<String, Object> userTokenAuth = new HashMap<>();
 
+        String jwt = jwtBuilder.generateToken(authenticatedUser);
+        Token token = new Token(jwt);
+
         userTokenAuth.put("user", authenticatedUser);
-        userTokenAuth.put("token", jwtBuilder.generateToken(authenticatedUser));
+        userTokenAuth.put("token", token);
 
         return userTokenAuth;
     }
