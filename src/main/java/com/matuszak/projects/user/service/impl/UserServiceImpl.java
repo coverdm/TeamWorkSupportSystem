@@ -19,26 +19,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserByUsername(String username) {
+        log.info("Getting an user by username...");
         return Optional.ofNullable(userRepository.getUserByUsername(username));
     }
 
     @Override
     public Optional<User> getUserByEmail(String email) {
+        log.info("Getting an user by email...");
         return Optional.ofNullable(userRepository.getUserByEmail(email));
     }
 
     @Override
     public User saveUser(User user) {
+        log.info("Saving user...");
         return userRepository.save(user);
     }
 
+    //TODO implement the method that deletes user
     @Override
     public void deleteUser(UserDTO user) {
-
+        log.info("Deleting user...");
     }
 
+    //TODO implement the method that updates user
     @Override
     public User updateUser(UserDTO user) {
+        log.info("Updating user...");
         return null;
     }
 

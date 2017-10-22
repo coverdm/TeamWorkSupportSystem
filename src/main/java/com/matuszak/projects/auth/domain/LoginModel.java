@@ -11,7 +11,6 @@ import lombok.*;
 @AllArgsConstructor
 public class LoginModel {
 
-    @ValidEmail
     private String email;
     private String password;
 
