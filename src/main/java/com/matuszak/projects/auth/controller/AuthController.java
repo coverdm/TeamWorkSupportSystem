@@ -14,6 +14,7 @@ import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +33,7 @@ public class AuthController {
     private final RegistrationProcess registrationProcess;
     private final ModelMapper modelMapper;
 
-    @RequestMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Token> login(@RequestBody @Valid LoginModel loginModel){
 
         try {
@@ -43,7 +44,7 @@ public class AuthController {
         }
     }
 
-    @RequestMapping("/register")
+    @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterModel registerModel){
 
         try{

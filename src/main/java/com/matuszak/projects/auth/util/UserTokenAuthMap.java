@@ -14,6 +14,7 @@ import java.util.Map;
 @Log
 @Component
 @RequiredArgsConstructor
+@Deprecated
 public class UserTokenAuthMap {
 
     private final JwtBuilder jwtBuilder;

@@ -23,7 +23,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Log
-public class Samples {
+public class SamplesCreator {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
