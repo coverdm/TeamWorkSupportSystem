@@ -4,7 +4,8 @@ import com.matuszak.projects.auth.domain.LoginModel;
 import com.matuszak.projects.auth.domain.RegisterModel;
 import com.matuszak.projects.auth.domain.Token;
 import com.matuszak.projects.auth.service.AuthenticationService;
-import com.matuszak.projects.auth.service.RegistrationProcess;
+import com.matuszak.projects.auth.service.LoginService;
+import com.matuszak.projects.auth.service.RegistrationService;
 import com.matuszak.projects.auth.exceptions.EmailAlreadyExistsException;
 import com.matuszak.projects.auth.exceptions.PasswordNotMatchedException;
 import com.matuszak.projects.user.dto.UserDTO;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.AuthenticationException;
 import javax.validation.Valid;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,15 +29,14 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthenticationService authenticationService;
-    private final RegistrationProcess registrationProcess;
     private final ModelMapper modelMapper;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
     public ResponseEntity<Token> login(@RequestBody @Valid LoginModel loginModel){
 
         try {
-            Token token = authenticationService.performAuthentication(loginModel);
+            Token token = authenticationService.login(loginModel);
             return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -48,7 +47,8 @@ public class AuthController {
     public ResponseEntity register(@RequestBody @Valid RegisterModel registerModel){
 
         try{
-            User register = registrationProcess.register(registerModel);
+
+            User register = authenticationService.register(registerModel);
             UserDTO userDTO = modelMapper.map(register, UserDTO.class);
 
             return new ResponseEntity(userDTO, HttpStatus.OK);
