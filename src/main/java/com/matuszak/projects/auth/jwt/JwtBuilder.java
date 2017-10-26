@@ -4,6 +4,7 @@ import com.matuszak.projects.user.dto.UserDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
+@Log
 public class JwtBuilder {
 
     public String generateToken(UserDTO user){

@@ -13,8 +13,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,20 +24,36 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class JwtParser {
 
-    public Authentication authenticationFromToken(Token accessToken){
+    private final JwtValidator jwtValidator;
+
+    public Optional<Authentication> authenticationFromToken(Token accessToken){
 
         log.info("Parsing token...");
-        log.info("Token: " + accessToken.getValue());
 
-        Claims claims = extractClaims(accessToken.getValue());
+        Optional<Claims> claims = Optional.ofNullable(accessToken.getValue())
+                .filter(jwtValidator::isPrefixValid)
+                .map(removeAuthorizationPrefix())
+                .map(String::trim)
+                .filter(jwtValidator::isPresentInRepository)
+                .filter(JwtParser::isTokenExpired)
+                .map(JwtParser::extractClaims);
 
-        List<GrantedAuthority> simpleGrantedAuthorities = authorityListFromClaims(claims);
-        User user = new User(claims.getSubject(), "", simpleGrantedAuthorities);
+        Optional<List<GrantedAuthority>> grantedAuthorities = claims.map(e -> authorityListFromClaims(e));
 
-        return new UsernamePasswordAuthenticationToken(user, "", simpleGrantedAuthorities);
+        return claims.map(Claims::getSubject)
+                .map(e -> new User(e, "", grantedAuthorities.get()))
+                .map(e -> new UsernamePasswordAuthenticationToken(e, "", e.getAuthorities()));
     }
 
-    private Claims extractClaims(String token) {
+    private static boolean isTokenExpired(String e) {
+        return Instant.now().isBefore(extractExpirationTime(e));
+    }
+
+    private Function<String, String> removeAuthorizationPrefix() {
+        return e -> e.replace(JwtUtil.PREFIX_AUTHENTICATION, "");
+    }
+
+    private static Claims extractClaims(String token) {
         return Jwts
                 .parser()
                 .setSigningKey(JwtUtil.SECRET_KEY)
@@ -44,21 +61,15 @@ public class JwtParser {
                 .getBody();
     }
 
+    private static Instant extractExpirationTime(String token){
+        return extractClaims(token)
+                .getIssuedAt()
+                .toInstant();
+    }
+
     private List<GrantedAuthority> authorityListFromClaims(Claims claims){
         return Stream.of(claims.get("claims").toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-
     }
-
-    public boolean isTokenExpired(Token token){
-
-        Date issuedAt = extractClaims(token.getValue())
-                .getIssuedAt();
-
-        log.info(issuedAt.toInstant().toString());
-
-        return !Instant.now().isBefore(issuedAt.toInstant());
-    }
-
 }
