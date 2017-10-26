@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Log
-public class RegistrationProcess {
+public class RegistrationService {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
