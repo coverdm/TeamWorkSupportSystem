@@ -28,7 +28,7 @@ public class UserController {
 
         Optional<UserDTO> userDTO = userService.getUserByUsername(principal.getName())
                 .map(e -> modelMapper.map(e, UserDTO.class));
-
+        
         return new ResponseEntity<>(userDTO.orElseThrow(UserNotFoundException::new), HttpStatus.ACCEPTED);
     }
 

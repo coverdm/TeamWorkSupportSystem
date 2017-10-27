@@ -1,28 +1,30 @@
-package com.matuszak.projects.room;
+package com.matuszak.projects.room.domain;
 
+import com.matuszak.projects.user.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
-import java.util.Collection;
 
-@Entity
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Room implements Serializable {
+@Entity
+public class Message implements Serializable{
 
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
 
-    private String topic;
+    @OneToOne
+    private User author;
 
-    @OneToMany
-    private Collection<Message> messages;
+    private String message;
 }
