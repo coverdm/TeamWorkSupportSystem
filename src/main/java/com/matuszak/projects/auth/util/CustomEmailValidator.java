@@ -10,9 +10,7 @@ import java.util.regex.Pattern;
 @Log
 public class CustomEmailValidator implements ConstraintValidator<ValidEmail, String>{
 
-    //TODO create email pattern by using regular expression (REGEX)
-    private final String EMAIL_PATTERN = "";
-
+    private final String EMAIL_PATTERN = "[a-zA-Z1-9_.]+[@]{1}[a-zA-Z1-9.]+[.]{1}[a-zA-Z1-9]{2,}";
     private Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
     @Override
