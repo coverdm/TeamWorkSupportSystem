@@ -1,11 +1,9 @@
-package com.matuszak.projects.auth.service;
+package com.matuszak.engineer.domain.auth.service;
 
-import com.matuszak.projects.auth.domain.Token;
-import com.matuszak.projects.auth.jwt.JwtBuilder;
-import com.matuszak.projects.auth.jwt.JwtParser;
-import com.matuszak.projects.auth.jwt.JwtValidator;
-import com.matuszak.projects.auth.repository.JwtRepository;
-import com.matuszak.projects.user.dto.UserDTO;
+import com.matuszak.engineer.domain.auth.model.entity.Subject;
+import com.matuszak.engineer.domain.auth.model.entity.Token;
+import com.matuszak.engineer.domain.auth.jwt.JwtBuilder;
+import com.matuszak.engineer.domain.auth.jwt.JwtParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.security.core.Authentication;
@@ -27,7 +25,7 @@ public class JwtService {
         return jwtParser.authenticationFromToken(new Token(accessToken));
     }
 
-    public Token createToken(UserDTO userDTO) {
-        return new Token(jwtBuilder.generateToken(userDTO));
+    public Token createToken(Subject subject) {
+        return new Token(jwtBuilder.generateToken(subject));
     }
 }

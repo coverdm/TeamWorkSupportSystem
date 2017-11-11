@@ -1,4 +1,4 @@
-package com.matuszak.projects.user.exceptions;
+package com.matuszak.engineer.domain.user.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
