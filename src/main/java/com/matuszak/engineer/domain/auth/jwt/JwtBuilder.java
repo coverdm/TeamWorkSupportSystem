@@ -1,6 +1,6 @@
-package com.matuszak.projects.auth.jwt;
+package com.matuszak.engineer.domain.auth.jwt;
 
-import com.matuszak.projects.user.dto.UserDTO;
+import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +15,10 @@ import java.util.Date;
 @Log
 public class JwtBuilder {
 
-    public String generateToken(UserDTO user){
+    public String generateToken(Subject subject){
         return Jwts.builder()
-                .claim("claims", user.getUserSecurityRole())
-                .setSubject(user.getUsername())
+                .claim("claims", subject.getAuthorities())
+                .setSubject(subject.getUsername())
                 .setIssuedAt(Date.from(Instant.now().plusSeconds(JwtUtil.EXPIRATION_SECOND_AMOUNT)))
                 .signWith(SignatureAlgorithm.HS256, JwtUtil.SECRET_KEY)
                 .compact();
