@@ -1,9 +1,12 @@
 package com.matuszak.engineer.domain.project.service;
 
-import com.matuszak.engineer.domain.project.entity.Participant;
-import com.matuszak.engineer.domain.project.entity.Project;
-import com.matuszak.engineer.domain.project.model.dto.ParticipantDTO;
+import com.matuszak.engineer.domain.project.exceptions.ParticipantNotFoundException;
+import com.matuszak.engineer.domain.project.model.ParticipantId;
+import com.matuszak.engineer.domain.project.model.ProjectId;
+import com.matuszak.engineer.domain.project.model.ProjectProperties;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
+import com.matuszak.engineer.domain.project.model.entity.Participant;
+import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.repository.ParticipantRepository;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +14,7 @@ import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,49 +24,35 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ModelMapper modelMapper;
     private final ParticipantRepository participantRepository;
+    private final ProjectFactory projectFactory;
 
-    public Optional<ProjectDTO> getProjectByUUID(String uuid) {
-        return projectRepository.getProjectByUuid(uuid)
+    public Optional<ProjectDTO> getProjectByProjectId(ProjectId projectId) {
+        return projectRepository.getProjectByProjectId(projectId)
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
-    public Project save(ProjectDTO projectDTO) {
+    public void addParticipant(ProjectId projectId, ParticipantId participantId){
 
-        Collection<ParticipantDTO> participants = projectDTO.getParticipants();
-        List<Participant> participantCollection = new ArrayList<>();
+        Optional<Project> project = this.projectRepository.getProjectByProjectId(projectId);
 
-        for(ParticipantDTO participantDTO:participants){
-            participantCollection.add(participantRepository.getOne(participantDTO.getId()));
-        }
+        Participant participant = participantRepository.getParticipantByParticipantId(participantId)
+                .orElseThrow(() -> new ParticipantNotFoundException());
 
-        Project build = new Project(UUID.randomUUID().toString(), projectDTO.getName());
-
-        return projectRepository.save(build);
+        project.ifPresent(e -> e.addParticipant(participant));
     }
 
-    //TODO improve update method
-    public void update(ProjectDTO projectDTO) {
-        projectRepository.getProjectByUuid(projectDTO.getUuid()).ifPresent(e -> updateProperties(e, projectDTO));
+    public Project createProject(ProjectProperties projectProperties) {
+        Project project = projectFactory.createProject(projectProperties);
+        return projectRepository.save(project);
     }
 
     public void delete(ProjectDTO projectDTO) {
-        projectRepository.getProjectByUuid(projectDTO.getUuid()).ifPresent(projectRepository::delete);
+        projectRepository.getProjectByProjectId(projectDTO.getProjectId())
+                .ifPresent( Project::markAsDeleted );
     }
 
-    public List<ProjectDTO> getProjectsByParticipant(ParticipantDTO participantDTO) {
-
-        Participant participant = participantRepository.getOne(participantDTO.getId());
-
-        return projectRepository.getProjectsByParticipants(Arrays.asList(participant))
-                .peek(e -> log.info("Before mapping: " + e))
-                .map(e -> modelMapper.map(e, ProjectDTO.class))
-                .peek(e -> log.info("After mapping: " + e))
-                .collect(Collectors.toList());
+    public void close(ProjectDTO projectDTO) {
+        projectRepository.getProjectByProjectId(projectDTO.getProjectId())
+                .ifPresent( Project::markAsClosed );
     }
-
-    private Project updateProperties(Project project, ProjectDTO projectDTO){
-        project.setName(projectDTO.getName());
-        return project;
-    }
-
 }
