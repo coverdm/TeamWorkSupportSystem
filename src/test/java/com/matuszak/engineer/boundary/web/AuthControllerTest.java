@@ -26,7 +26,10 @@ public class AuthControllerTest {
     @Autowired
     RestTemplate restTemplate;
 
-    private final String PATH_LOGIN = "http://127.0.1.1:8081/api/auth/login";
+    private final String PORT = "8082";
+    private final String LOCALHOST = "http://127.0.1.1";
+    private final String PATH_LOGIN = "/api/auth/login";
+
     private final HttpHeaders httpHeaders = new HttpHeaders();
 
     @Before
@@ -42,7 +45,7 @@ public class AuthControllerTest {
         HttpEntity<?> body = new HttpEntity<>(loginModel, this.httpHeaders);
 
         //do
-        ResponseEntity<Token> tokenResponseEntity = restTemplate.exchange(this.PATH_LOGIN, HttpMethod.POST, body, Token.class);
+        ResponseEntity<Token> tokenResponseEntity = restTemplate.exchange(LOCALHOST + ":" + PORT + PATH_LOGIN, HttpMethod.POST, body, Token.class);
         Assertions.assertThat(tokenResponseEntity).isNotNull();
     }
 
