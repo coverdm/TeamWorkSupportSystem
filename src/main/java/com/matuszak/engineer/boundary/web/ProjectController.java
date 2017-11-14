@@ -1,6 +1,8 @@
 package com.matuszak.engineer.boundary.web;
 
-import com.matuszak.engineer.domain.project.entity.Project;
+import com.matuszak.engineer.domain.project.model.ProjectId;
+import com.matuszak.engineer.domain.project.model.ProjectProperties;
+import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
 import com.matuszak.engineer.domain.project.service.ProjectService;
@@ -23,18 +25,17 @@ public class ProjectController {
     private final ModelMapper modelMapper;
 
     @PostMapping("/create")
-    public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO project, Principal principal){
+    public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectProperties projectProperties, Principal principal){
 
-        Project projectCreated = projectService.save(project);
-
+        Project projectCreated = projectService.createProject(projectProperties);
         ProjectDTO map = modelMapper.map(projectCreated, ProjectDTO.class);
 
         return new ResponseEntity<>(map,HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<ProjectDTO> getProject(@PathVariable("uuid") String uuid){
-        return new ResponseEntity<>(projectService.getProjectByUUID(uuid)
+    public ResponseEntity<ProjectDTO> getProject(@RequestBody ProjectId projectId){
+        return new ResponseEntity<>(projectService.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new), HttpStatus.ACCEPTED);
     }
 }
