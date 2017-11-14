@@ -1,7 +1,5 @@
 package com.matuszak.engineer.domain.auth.model.dto;
 
-import com.matuszak.engineer.domain.auth.annotations.ValidEmail;
-import com.matuszak.engineer.domain.auth.annotations.ValidPassword;
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
