@@ -1,24 +1,26 @@
-package com.matuszak.engineer.domain.project.entity;
+package com.matuszak.engineer.domain.project.model.entity;
 
+import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ParticipantLevel;
 import com.matuszak.engineer.infrastructure.entity.BaseEntity;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 
 @Entity
-@Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Participant extends BaseEntity{
+@Getter
+public class Participant{
 
-    private Long userID;
+    @EmbeddedId
+    private ParticipantId participantId;
 
     @Enumerated
     private ParticipantLevel level;
 }
+

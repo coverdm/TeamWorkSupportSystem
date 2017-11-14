@@ -1,7 +1,7 @@
 package com.matuszak.engineer.domain.project.model.dto;
 
+import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ParticipantLevel;
-import com.matuszak.engineer.domain.user.model.UserDTO;
 import lombok.*;
 
 @NoArgsConstructor
@@ -11,7 +11,6 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class ParticipantDTO {
-    private Long id;
-    private UserDTO user;
+    private ParticipantId participantId;
     private ParticipantLevel level;
 }
