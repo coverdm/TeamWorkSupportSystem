@@ -2,18 +2,20 @@ package com.matuszak.engineer;
 
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
+import com.matuszak.engineer.domain.auth.model.entity.SubjectId;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
-import com.matuszak.engineer.domain.project.entity.Participant;
-import com.matuszak.engineer.domain.project.entity.Project;
+import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ParticipantLevel;
+import com.matuszak.engineer.domain.project.model.ProjectId;
+import com.matuszak.engineer.domain.project.model.ProjectProperties;
+import com.matuszak.engineer.domain.project.model.entity.Participant;
+import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.repository.ParticipantRepository;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
-import com.matuszak.engineer.domain.user.entity.User;
-import com.matuszak.engineer.domain.user.repository.UserRepository;
+import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,7 +27,6 @@ import java.util.UUID;
 @Log
 public class SamplesCreator {
 
-    private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final ParticipantRepository participantRepository;
     private final SubjectRepository subjectRepository;
@@ -34,41 +35,27 @@ public class SamplesCreator {
     @PostConstruct
     public void setUpDatabase(){
 
-        User user = new User();
-        user.setEmail("admin@admin.com");
+        final String password = "JakisPassword";
+        final String email = "admin@admin.com";
+        final String username = "username";
 
-        User participant = new User();
-        participant.setEmail("jakis@email.com");
+        UserId id = new UserId(1l);
 
-        User disabledUser = new User();
-        disabledUser.setEmail("disabled@user.pl");
-
-        Participant projectManager = Participant.builder()
-                .userID(1l)
-                .level(ParticipantLevel.PROJECT_MANAGER)
-                .build();
-
-        Participant programmer = Participant.builder()
-                .userID(2l)
-                .level(ParticipantLevel.PROGRAMMER)
-                .build();
-
-        Subject subject = new Subject("admin@admin.com", "jakisusername", passwordEncoder.encode("JakisPassword"),
+        Subject subject = new Subject(new SubjectId(id), email,username, passwordEncoder.encode(password),
                 SecurityLevel.ADMIN, true, null);
+
+        Participant programmer =
+                new Participant(new ParticipantId(id), ParticipantLevel.PROGRAMMER);
+
+        Participant graphicsDesigner =
+                new Participant(new ParticipantId(id), ParticipantLevel.GRAPHICS_DESIGNER);
+
+        Project project = new Project(
+                new ProjectId(UUID.randomUUID().toString()), new ProjectProperties("jakisProjekt", "jakisOpis")
+        );
+
         this.subjectRepository.save(subject);
-
-        this.participantRepository.save(Arrays.asList(projectManager, programmer));
-
-        String uuid = UUID.randomUUID().toString();
-
-        Project project = new Project(uuid, "JakisProjekt");
-        project.addParticipant(programmer);
-
+        this.participantRepository.save(Arrays.asList(graphicsDesigner, programmer));
         this.projectRepository.save(project);
-
-        this.userRepository.save(Arrays.asList(user,participant,disabledUser));
-
-
-
     }
 }
