@@ -1,6 +1,5 @@
-package com.matuszak.engineer.infrastructure.entity;
+package com.matuszak.engineer.domain.auth.model.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.persistence.Embeddable;
@@ -9,13 +8,17 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 @Getter
-@AllArgsConstructor
 @Embeddable
-public class UserId implements Serializable{
+public class SubjectId implements Serializable{
 
-    private String userId;
+    private String id;
 
-    private UserId() {
+    public SubjectId(){
+        this.id = generate();
+    }
+
+    public SubjectId(String id) {
+        this.id = id;
     }
 
     public static String generate(){

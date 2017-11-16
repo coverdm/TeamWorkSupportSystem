@@ -1,16 +1,26 @@
 package com.matuszak.engineer.domain.auth.model.entity;
 
-import com.matuszak.engineer.infrastructure.entity.BaseEntity;
-import lombok.*;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
-@Getter
 @NoArgsConstructor
-public class Token extends BaseEntity{
+public class Token{
+
+    @Id
+    @GeneratedValue(strategy =  GenerationType.AUTO)
+    private Long id;
     private String value;
+
     public Token(String value) {
         this.value = value;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

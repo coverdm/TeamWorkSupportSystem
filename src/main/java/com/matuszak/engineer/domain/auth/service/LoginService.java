@@ -43,7 +43,7 @@ public class LoginService {
         Token save = jwtRepository.save(jwtService.createToken(subject));
         log.info("Token saved");
 
-        auth.put("userId", subject.getUserId().getUserId());
+        auth.put("userId", subject.getSubjectId());
         auth.put("token", save.getValue());
 
         log.info("Auth context: " + auth.toString());

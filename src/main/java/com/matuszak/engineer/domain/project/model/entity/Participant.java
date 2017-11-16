@@ -1,10 +1,8 @@
 package com.matuszak.engineer.domain.project.model.entity;
 
+import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ParticipantLevel;
-import com.matuszak.engineer.infrastructure.entity.UserId;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,7 +15,7 @@ public class Participant implements Serializable{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private UserId userId;
+    private ParticipantId participantId;
 
     @Enumerated
     private ParticipantLevel level;
@@ -25,8 +23,8 @@ public class Participant implements Serializable{
     private Participant() { // just for hibernate
     }
 
-    public Participant(UserId userId, ParticipantLevel level) {
-        this.userId = userId;
+    public Participant(ParticipantId participantId, ParticipantLevel level) {
+        this.participantId = participantId;
         this.level = level;
     }
 }

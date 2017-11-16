@@ -5,15 +5,13 @@ import com.matuszak.engineer.domain.auth.exceptions.EmailAlreadyExistsException;
 import com.matuszak.engineer.domain.auth.exceptions.PasswordNotMatchedException;
 import com.matuszak.engineer.domain.auth.model.dto.LoginModel;
 import com.matuszak.engineer.domain.auth.model.dto.RegisterModel;
-import com.matuszak.engineer.domain.auth.model.entity.Token;
+import com.matuszak.engineer.domain.auth.model.entity.SubjectId;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
-import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -33,8 +31,8 @@ public class AuthenticationService {
         registrationService.register(registerModel);
     }
 
-    public Boolean isUserExists(UserId userId){
-        return subjectRepository.getSubjectByUserId(userId).isPresent();
+    public Boolean isSubjectExists(SubjectId subjectId){
+        return subjectRepository.getSubjectBySubjectId(subjectId).isPresent();
     }
 
 }

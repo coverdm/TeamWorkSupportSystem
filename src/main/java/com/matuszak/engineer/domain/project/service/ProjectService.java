@@ -1,5 +1,6 @@
 package com.matuszak.engineer.domain.project.service;
 
+import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ParticipantLevel;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
@@ -8,7 +9,6 @@ import com.matuszak.engineer.domain.project.model.entity.Participant;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.repository.ParticipantRepository;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
-import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
@@ -34,18 +34,18 @@ public class ProjectService {
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
-    public void addParticipant(ProjectId projectId, UserId userId){
+    public void addParticipant(ProjectId projectId, ParticipantId participantId){
         this.projectRepository.getProjectByProjectId(projectId)
                 .ifPresent(e -> {
-                    Participant participant = new Participant(userId, ParticipantLevel.PROGRAMMER);
+                    Participant participant = new Participant(participantId, ParticipantLevel.PROGRAMMER);
                     this.participantRepository.save(participant);
                     e.addParticipant(participant);
                 });
     }
 
-    public Project createProject(ProjectProperties projectProperties, UserId userId) {
+    public Project createProject(ProjectProperties projectProperties, ParticipantId participantId) {
         Project project = projectFactory.createProject(projectProperties);
-        Participant participant = participantRepository.save(new Participant(userId, ParticipantLevel.OWNER));
+        Participant participant = participantRepository.save(new Participant(participantId, ParticipantLevel.OWNER));
         project.addParticipant(participant);
         return projectRepository.save(project);
     }
@@ -61,18 +61,18 @@ public class ProjectService {
     }
 
 
-    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(UserId userId){
+    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(ParticipantId participantId){
 
-        return (List<ProjectDTO>) getProjectsByUserIn(userId)
+        return (List<ProjectDTO>) getProjectsByUserIn(participantId)
                 .stream()
                 .map(e -> modelMapper.map(e, ProjectDTO.class))
                 .collect(Collectors.toList());
     }
 
-    private Collection getProjectsByUserIn(UserId userId) {
+    private Collection getProjectsByUserIn(ParticipantId participantId) {
 
         Collection<Participant> participants =
-                participantRepository.getParticipantByUserId(userId);
+                participantRepository.getParticipantByParticipantId(participantId);
 
         Collection<Project> projects =
                 projectRepository.findProjectsByParticipantsIn(participants);

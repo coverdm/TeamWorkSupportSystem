@@ -1,22 +1,22 @@
 package com.matuszak.engineer.domain.auth.model.entity;
 
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
-import com.matuszak.engineer.infrastructure.entity.User;
-import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
-@NoArgsConstructor
-@Data
+@AllArgsConstructor
 @Builder
-public class Subject extends User{
+@Entity
+@Data
+public class Subject {
+
+    @EmbeddedId
+    private SubjectId subjectId;
 
     private String email;
     private String username;
@@ -30,15 +30,10 @@ public class Subject extends User{
     @ElementCollection
     private List<SimpleGrantedAuthority> authorities;
 
-    public Subject(String email, String username, String password, SecurityLevel securityLevel, Boolean enabled, List<SimpleGrantedAuthority> authorities) {
+    public String getSubjectId() {
+        return subjectId.getId();
+    }
 
-        super.userId = new UserId(UserId.generate());
-
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.securityLevel = securityLevel;
-        this.enabled = enabled;
-        this.authorities = authorities;
+    private Subject() { // just for hibernate
     }
 }
