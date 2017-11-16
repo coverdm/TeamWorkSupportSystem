@@ -4,8 +4,8 @@ import com.matuszak.engineer.domain.auth.exceptions.EmailAlreadyExistsException;
 import com.matuszak.engineer.domain.auth.exceptions.PasswordNotMatchedException;
 import com.matuszak.engineer.domain.auth.model.dto.LoginModel;
 import com.matuszak.engineer.domain.auth.model.dto.RegisterModel;
+import com.matuszak.engineer.domain.auth.model.entity.SubjectId;
 import com.matuszak.engineer.domain.auth.service.AuthenticationService;
-import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
@@ -49,8 +49,8 @@ public class AuthController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<Boolean> isUserExists(@RequestParam UserId userId){
-        Boolean userExists = authenticationService.isUserExists(userId);
+    public ResponseEntity<Boolean> isUserExists(@RequestParam String subjectId){
+        Boolean userExists = authenticationService.isSubjectExists(new SubjectId(subjectId));
         return new ResponseEntity<>(userExists, HttpStatus.OK);
     }
 }

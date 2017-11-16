@@ -1,12 +1,12 @@
 package com.matuszak.engineer.boundary.web;
 
+import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
+import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
-import com.matuszak.engineer.domain.project.model.entity.Project;
-import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
+import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.service.ProjectService;
-import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
@@ -37,7 +37,7 @@ public class ProjectController {
         Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
 
         if(isUserExists){
-            Project project = projectService.createProject(projectProperties, new UserId(userId));
+            Project project = projectService.createProject(projectProperties, new ParticipantId(userId));
             ProjectDTO projectDTO = modelMapper.map(project, ProjectDTO.class);
             return new ResponseEntity<>(projectDTO,HttpStatus.ACCEPTED);
         }
@@ -53,7 +53,7 @@ public class ProjectController {
     @GetMapping("/getAll")
     public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId){
         Collection<ProjectDTO> allAvailableProjectsByUserIn =
-                projectService.getAllAvailableProjectsByUserIn(new UserId(userId));
+                projectService.getAllAvailableProjectsByUserIn(new ParticipantId(userId));
         return new ResponseEntity(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
     }
 
@@ -65,7 +65,7 @@ public class ProjectController {
         Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
 
         if(isUserExists){
-            projectService.addParticipant(new ProjectId(uuid), new UserId(userId));
+            projectService.addParticipant(new ProjectId(uuid), new ParticipantId(userId));
             return new ResponseEntity(HttpStatus.ACCEPTED);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -76,7 +76,7 @@ public class ProjectController {
         headers.set("Authorization", httpServletRequest.getHeader("Authorization"));
 
         HttpEntity httpEntity = new HttpEntity("parameters", headers);
-        String url = HOST + "/api/auth/check?userId=" + userId;
+        String url = HOST + "/api/auth/check?subjectId=" + userId;
 
         return restTemplate.exchange(url, HttpMethod.GET, httpEntity, Boolean.class).getBody();
     }
