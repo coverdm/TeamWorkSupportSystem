@@ -1,16 +1,19 @@
 package com.matuszak.engineer.domain.project.model.dto;
 
+import com.matuszak.engineer.domain.project.model.ProjectId;
+import com.matuszak.engineer.domain.project.model.ProjectProperties;
 import lombok.*;
 import java.util.Collection;
+import java.util.UUID;
 
 @Builder
+@ToString
+@Getter
+@Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@Data
-@EqualsAndHashCode
 public class ProjectDTO {
-    private String uuid;
-    private String name;
-    private Collection<ParticipantDTO> participants;
+    private ProjectId projectId;
+    private ProjectProperties projectProperties;
 }

@@ -4,13 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.FORBIDDEN)
-public class InvalidJwtFormatException extends RuntimeException{
+public class IllegalJwtFormatException extends RuntimeException{
 
-    public InvalidJwtFormatException() {
+    public IllegalJwtFormatException() {
         super();
     }
 
-    public InvalidJwtFormatException(String s) {
+    public IllegalJwtFormatException(String s) {
         super(s);
     }
 }

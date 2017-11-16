@@ -1,17 +1,22 @@
 package com.matuszak.engineer.domain.project.service;
 
-import com.matuszak.engineer.domain.project.entity.Participant;
-import com.matuszak.engineer.domain.project.entity.Project;
-import com.matuszak.engineer.domain.project.model.dto.ParticipantDTO;
+import com.matuszak.engineer.domain.project.model.ParticipantLevel;
+import com.matuszak.engineer.domain.project.model.ProjectId;
+import com.matuszak.engineer.domain.project.model.ProjectProperties;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
+import com.matuszak.engineer.domain.project.model.entity.Participant;
+import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.repository.ParticipantRepository;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
+import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,49 +27,80 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ModelMapper modelMapper;
     private final ParticipantRepository participantRepository;
+    private final ProjectFactory projectFactory;
 
-    public Optional<ProjectDTO> getProjectByUUID(String uuid) {
-        return projectRepository.getProjectByUuid(uuid)
+    public Optional<ProjectDTO> getProjectByProjectId(ProjectId projectId) {
+        return projectRepository.getProjectByProjectId(projectId)
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
-    public Project save(ProjectDTO projectDTO) {
-
-        Collection<ParticipantDTO> participants = projectDTO.getParticipants();
-        List<Participant> participantCollection = new ArrayList<>();
-
-        for(ParticipantDTO participantDTO:participants){
-            participantCollection.add(participantRepository.getOne(participantDTO.getId()));
-        }
-
-        Project build = new Project(UUID.randomUUID().toString(), projectDTO.getName());
-
-        return projectRepository.save(build);
+    public void addParticipant(ProjectId projectId, UserId userId){
+        this.projectRepository.getProjectByProjectId(projectId)
+                .ifPresent(e -> {
+                    Participant participant = new Participant(userId, ParticipantLevel.PROGRAMMER);
+                    this.participantRepository.save(participant);
+                    e.addParticipant(participant);
+                });
     }
 
-    //TODO improve update method
-    public void update(ProjectDTO projectDTO) {
-        projectRepository.getProjectByUuid(projectDTO.getUuid()).ifPresent(e -> updateProperties(e, projectDTO));
+    public Project createProject(ProjectProperties projectProperties, UserId userId) {
+        Project project = projectFactory.createProject(projectProperties);
+        Participant participant = participantRepository.save(new Participant(userId, ParticipantLevel.OWNER));
+        project.addParticipant(participant);
+        return projectRepository.save(project);
     }
 
-    public void delete(ProjectDTO projectDTO) {
-        projectRepository.getProjectByUuid(projectDTO.getUuid()).ifPresent(projectRepository::delete);
+    public void delete(ProjectId projectId) {
+        projectRepository.getProjectByProjectId(projectId)
+                .ifPresent( Project::markAsDeleted );
     }
 
-    public List<ProjectDTO> getProjectsByParticipant(ParticipantDTO participantDTO) {
+    public void close(ProjectId projectId) {
+        projectRepository.getProjectByProjectId(projectId)
+                .ifPresent( Project::markAsClosed );
+    }
 
-        Participant participant = participantRepository.getOne(participantDTO.getId());
 
-        return projectRepository.getProjectsByParticipants(Arrays.asList(participant))
-                .peek(e -> log.info("Before mapping: " + e))
+    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(UserId userId){
+
+        return (List<ProjectDTO>) getProjectsByUserIn(userId)
+                .stream()
                 .map(e -> modelMapper.map(e, ProjectDTO.class))
-                .peek(e -> log.info("After mapping: " + e))
                 .collect(Collectors.toList());
     }
 
-    private Project updateProperties(Project project, ProjectDTO projectDTO){
-        project.setName(projectDTO.getName());
-        return project;
-    }
+    private Collection getProjectsByUserIn(UserId userId) {
 
+        Collection<Participant> participants =
+                participantRepository.getParticipantByUserId(userId);
+
+        Collection<Project> projects =
+                projectRepository.findProjectsByParticipantsIn(participants);
+
+        return projects;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

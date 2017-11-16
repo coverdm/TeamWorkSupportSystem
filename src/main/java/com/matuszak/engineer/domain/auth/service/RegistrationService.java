@@ -6,7 +6,6 @@ import com.matuszak.engineer.domain.auth.model.SecurityLevel;
 import com.matuszak.engineer.domain.auth.model.dto.RegisterModel;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
-import com.matuszak.engineer.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.security.crypto.password.PasswordEncoder;
