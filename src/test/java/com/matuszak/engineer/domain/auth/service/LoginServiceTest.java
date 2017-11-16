@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.security.auth.login.LoginException;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,10 +71,9 @@ public class LoginServiceTest {
         when(jwtRepository.save(token))
                 .thenReturn(token);
 
-        Token receivedToken = loginService.login(loginModel);
+        Map<String, Object> auth = loginService.login(loginModel);
 
-        assertThat(receivedToken).isNotNull();
-        assertThat(receivedToken).isEqualToComparingFieldByField(token);
+        assertThat(auth).isNotNull();
     }
 
     @Test

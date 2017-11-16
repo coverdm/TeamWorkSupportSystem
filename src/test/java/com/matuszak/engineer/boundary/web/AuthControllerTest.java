@@ -16,6 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.LoginException;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Log
 @SpringBootTest
@@ -26,7 +29,7 @@ public class AuthControllerTest {
     @Autowired
     RestTemplate restTemplate;
 
-    private final String PORT = "8082";
+    private final String PORT = "8080";
     private final String LOCALHOST = "http://127.0.1.1";
     private final String PATH_LOGIN = "/api/auth/login";
 
@@ -45,8 +48,10 @@ public class AuthControllerTest {
         HttpEntity<?> body = new HttpEntity<>(loginModel, this.httpHeaders);
 
         //do
-        ResponseEntity<Token> tokenResponseEntity = restTemplate.exchange(LOCALHOST + ":" + PORT + PATH_LOGIN, HttpMethod.POST, body, Token.class);
-        Assertions.assertThat(tokenResponseEntity).isNotNull();
+        ResponseEntity<Map> authMap = restTemplate.exchange(LOCALHOST + ":" + PORT + PATH_LOGIN, HttpMethod.POST, body, Map.class);
+        assertThat(authMap).isNotNull();
+        assertThat(authMap.getBody().get("token")).isNotNull();
+        assertThat(authMap.getBody().get("userId")).isNotNull();
     }
 
 }
