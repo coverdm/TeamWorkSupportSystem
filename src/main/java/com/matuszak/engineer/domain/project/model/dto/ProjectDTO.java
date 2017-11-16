@@ -9,10 +9,11 @@ import java.util.UUID;
 @Builder
 @ToString
 @Getter
+@Setter
 @EqualsAndHashCode
+@NoArgsConstructor
 @AllArgsConstructor
 public class ProjectDTO {
     private ProjectId projectId;
     private ProjectProperties projectProperties;
-    private Collection<ParticipantDTO> participants;
 }

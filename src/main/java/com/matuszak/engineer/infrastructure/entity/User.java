@@ -2,13 +2,16 @@ package com.matuszak.engineer.infrastructure.entity;
 
 import lombok.AllArgsConstructor;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
+import java.util.UUID;
 
 @MappedSuperclass
-public abstract class User {
+public class User {
 
     @EmbeddedId
     protected UserId userId;
 
+    public UserId getUserId(){
+        return userId;
+    }
 }

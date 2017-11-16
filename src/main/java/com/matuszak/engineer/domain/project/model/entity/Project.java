@@ -3,13 +3,11 @@ package com.matuszak.engineer.domain.project.model.entity;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
 import com.matuszak.engineer.domain.project.model.ProjectStatus;
-import com.matuszak.engineer.infrastructure.entity.BaseEntity;
-import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -25,8 +23,7 @@ public class Project{
     @OneToMany
     private Collection<Participant> participants;
 
-    public Project() {
-        this.participants = new ArrayList<>();
+    private Project() { // just for hibernate
     }
 
     public Project(ProjectId projectId, ProjectProperties projectProperties) {

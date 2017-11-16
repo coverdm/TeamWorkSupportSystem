@@ -1,5 +1,5 @@
 package com.matuszak.engineer.domain.project.model;
 
 public enum ParticipantLevel {
-    PROJECT_MANAGER, PROGRAMMER, GRAPHICS_DESIGNER
+    PROJECT_MANAGER, PROGRAMMER, OWNER, GRAPHICS_DESIGNER
 }

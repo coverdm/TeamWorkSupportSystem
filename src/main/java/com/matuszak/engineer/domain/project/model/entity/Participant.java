@@ -1,26 +1,33 @@
 package com.matuszak.engineer.domain.project.model.entity;
 
-import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ParticipantLevel;
-import com.matuszak.engineer.infrastructure.entity.BaseEntity;
+import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-public class Participant{
+@Data
+public class Participant implements Serializable{
 
-    @EmbeddedId
-    private ParticipantId participantId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private UserId userId;
 
     @Enumerated
     private ParticipantLevel level;
+
+    private Participant() { // just for hibernate
+    }
+
+    public Participant(UserId userId, ParticipantLevel level) {
+        this.userId = userId;
+        this.level = level;
+    }
 }
 
