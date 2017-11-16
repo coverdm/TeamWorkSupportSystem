@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Token extends BaseEntity{
-
     private String value;
     public Token(String value) {
         this.value = value;

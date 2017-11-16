@@ -1,7 +1,6 @@
 package com.matuszak.engineer.domain.auth.model.entity;
 
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
-import com.matuszak.engineer.infrastructure.entity.BaseEntity;
 import com.matuszak.engineer.infrastructure.entity.User;
 import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.AllArgsConstructor;
@@ -15,13 +14,9 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @Builder
-public class Subject{
-
-    @EmbeddedId
-    private SubjectId subjectId;
+public class Subject extends User{
 
     private String email;
     private String username;
@@ -34,4 +29,16 @@ public class Subject{
 
     @ElementCollection
     private List<SimpleGrantedAuthority> authorities;
+
+    public Subject(String email, String username, String password, SecurityLevel securityLevel, Boolean enabled, List<SimpleGrantedAuthority> authorities) {
+
+        super.userId = new UserId(UserId.generate());
+
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.securityLevel = securityLevel;
+        this.enabled = enabled;
+        this.authorities = authorities;
+    }
 }
