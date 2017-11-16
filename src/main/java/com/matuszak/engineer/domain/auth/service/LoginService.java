@@ -11,6 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
@@ -23,17 +26,29 @@ public class LoginService {
     private final JwtService jwtService;
     private final JwtRepository jwtRepository;
 
-    public Token login(LoginModel loginModel) throws LoginException {
+    public Map<String, Object> login(LoginModel loginModel) throws LoginException {
+
+        Map<String, Object> auth = new HashMap<>();
 
         log.info("Authentication process...");
 
-        Subject subject = this.subjectRepository.getSubjectByEmail(loginModel.getEmail())
+        Optional<Subject> subjectByEmail = this.subjectRepository.getSubjectByEmail(loginModel.getEmail());
+
+        Subject subject = subjectByEmail
                 .filter(e -> isPasswordMatches(loginModel, e))
                 .filter(Subject::getEnabled)
-                .orElseThrow(LoginException::new);
+                .orElseThrow(() -> new LoginException("Subject is disabled or password doesnt match"));
 
+        log.info("Saving token...");
+        Token save = jwtRepository.save(jwtService.createToken(subject));
+        log.info("Token saved");
 
-        return jwtRepository.save(jwtService.createToken(subject));
+        auth.put("userId", subject.getUserId().getUserId());
+        auth.put("token", save.getValue());
+
+        log.info("Auth context: " + auth.toString());
+
+        return auth;
     }
 
     private boolean isPasswordMatches(LoginModel loginModel, Subject e) {
