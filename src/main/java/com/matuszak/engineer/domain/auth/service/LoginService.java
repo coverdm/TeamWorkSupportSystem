@@ -37,11 +37,10 @@ public class LoginService {
         Subject subject = subjectByEmail
                 .filter(e -> isPasswordMatches(loginModel, e))
                 .filter(Subject::getEnabled)
-                .orElseThrow(() -> new LoginException("Subject is disabled or password doesnt match"));
+                .orElseThrow(() -> new LoginException("Subject is disabled or password does not match"));
 
         log.info("Saving token...");
         Token save = jwtRepository.save(jwtService.createToken(subject));
-        log.info("Token saved");
 
         auth.put("userId", subject.getSubjectId());
         auth.put("token", save.getValue());

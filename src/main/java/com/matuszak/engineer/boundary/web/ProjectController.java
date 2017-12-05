@@ -5,6 +5,7 @@ import com.matuszak.engineer.domain.project.model.ParticipantId;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
+import com.matuszak.engineer.domain.project.model.dto.ProjectItemDTO;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -28,36 +29,35 @@ public class ProjectController {
     private final RestTemplate restTemplate;
     private final String HOST = "http://localhost:8080";
 
-
     @PostMapping("/create")
-    public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectProperties projectProperties,
-                                                    HttpServletRequest httpServletRequest,
-                                                    @RequestParam  String userId){
+    public ResponseEntity<ProjectItemDTO> createProject(@RequestBody ProjectProperties projectProperties,
+                                                        HttpServletRequest httpServletRequest,
+                                                        @RequestParam  String userId){
 
         Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
 
         if(isUserExists){
             Project project = projectService.createProject(projectProperties, new ParticipantId(userId));
-            ProjectDTO projectDTO = modelMapper.map(project, ProjectDTO.class);
-            return new ResponseEntity<>(projectDTO,HttpStatus.ACCEPTED);
+            ProjectItemDTO projectItemDTO = modelMapper.map(project, ProjectItemDTO.class);
+            return new ResponseEntity<>(projectItemDTO,HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<ProjectDTO> getProject(@RequestBody ProjectId projectId){
-        return new ResponseEntity<>(projectService.getProjectByProjectId(projectId)
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ProjectDTO> getProject(@PathVariable String projectId){
+        return new ResponseEntity<>(projectService.getProjectByProjectId(new ProjectId(projectId))
                 .orElseThrow(ProjectNotFoundException::new), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId){
-        Collection<ProjectDTO> allAvailableProjectsByUserIn =
+    @GetMapping("/getListOfProjects")
+    public ResponseEntity<Collection<ProjectItemDTO>> getAllProjects(@RequestParam String userId){
+        Collection<ProjectItemDTO> allAvailableProjectsByUserIn =
                 projectService.getAllAvailableProjectsByUserIn(new ParticipantId(userId));
         return new ResponseEntity(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/{uuid}")
+    @PostMapping("/{uuid}/addParticipant")
     public ResponseEntity addParticipant(@PathVariable String uuid,
                                          @RequestParam String userId,
                                          HttpServletRequest httpServletRequest){

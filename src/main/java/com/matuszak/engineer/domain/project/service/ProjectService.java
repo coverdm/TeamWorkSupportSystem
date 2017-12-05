@@ -5,6 +5,7 @@ import com.matuszak.engineer.domain.project.model.ParticipantLevel;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
+import com.matuszak.engineer.domain.project.model.dto.ProjectItemDTO;
 import com.matuszak.engineer.domain.project.model.entity.Participant;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.repository.ParticipantRepository;
@@ -34,12 +35,13 @@ public class ProjectService {
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
+    // TODO needs to check does participant is already in project
     public void addParticipant(ProjectId projectId, ParticipantId participantId){
         this.projectRepository.getProjectByProjectId(projectId)
                 .ifPresent(e -> {
                     Participant participant = new Participant(participantId, ParticipantLevel.PROGRAMMER);
-                    this.participantRepository.save(participant);
-                    e.addParticipant(participant);
+                    e.addParticipant(this.participantRepository.save(participant));
+                    projectRepository.save(e);
                 });
     }
 
@@ -61,11 +63,11 @@ public class ProjectService {
     }
 
 
-    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(ParticipantId participantId){
+    public Collection<ProjectItemDTO> getAllAvailableProjectsByUserIn(ParticipantId participantId){
 
-        return (List<ProjectDTO>) getProjectsByUserIn(participantId)
+        return (List<ProjectItemDTO>) getProjectsByUserIn(participantId)
                 .stream()
-                .map(e -> modelMapper.map(e, ProjectDTO.class))
+                .map(e -> modelMapper.map(e, ProjectItemDTO.class))
                 .collect(Collectors.toList());
     }
 

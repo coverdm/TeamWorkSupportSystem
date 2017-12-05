@@ -23,6 +23,9 @@ public class Project{
     @OneToMany
     private Collection<Participant> participants;
 
+    @OneToMany
+    private Collection<Task> tasks;
+
     private Project() { // just for hibernate
     }
 
@@ -31,10 +34,15 @@ public class Project{
         this.projectProperties = projectProperties;
         projectStatus = ProjectStatus.CREATED;
         this.participants = new ArrayList<>();
+        this.tasks = new ArrayList<>();
     }
 
     public void addParticipant(Participant participant){
         participants.add(participant);
+    }
+
+    public void addTask(Task task){
+        tasks.add(task);
     }
 
     public void markAsDeleted() {

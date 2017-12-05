@@ -5,6 +5,7 @@ import com.matuszak.engineer.domain.auth.exceptions.PasswordNotMatchedException;
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
 import com.matuszak.engineer.domain.auth.model.dto.RegisterModel;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
+import com.matuszak.engineer.domain.auth.model.entity.SubjectId;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -23,7 +24,7 @@ public class RegistrationService {
 
         log.info("Performing registration...");
 
-        if(!registerModel.getPassword().equals(registerModel.getRePassword()))
+        if(!registerModel.getPassword().equals(registerModel.getConfirmPassword()))
             throw new PasswordNotMatchedException("Passwords are not matched");
 
         if(subjectRepository.getSubjectByEmail((registerModel.getEmail())).isPresent())
@@ -32,7 +33,9 @@ public class RegistrationService {
         log.info("Validation process finished successfully");
 
         Subject subject = Subject.builder()
+                .subjectId(new SubjectId())
                 .email(registerModel.getEmail())
+                .enabled(Boolean.TRUE)
                 .password(passwordEncoder.encode(registerModel.getPassword()))
                 .username(registerModel.getUsername())
                 .securityLevel(SecurityLevel.USER)

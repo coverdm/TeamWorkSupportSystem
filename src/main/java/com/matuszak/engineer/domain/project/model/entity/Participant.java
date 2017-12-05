@@ -28,4 +28,3 @@ public class Participant implements Serializable{
         this.level = level;
     }
 }
-

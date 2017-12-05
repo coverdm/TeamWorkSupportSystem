@@ -3,7 +3,6 @@ package com.matuszak.engineer.domain.project.service;
 
 import com.matuszak.engineer.Application;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
-import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import org.junit.Test;
 import org.junit.runner.RunWith;

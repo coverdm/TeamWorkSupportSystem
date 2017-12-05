@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 
 public class CustomPasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
-    private final String EMAIL_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9]).{3,20}$";
-    private Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+    private final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9]).{3,20}$";
+    private Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
 
     public boolean validateRawPassword(String rawPassword){
 

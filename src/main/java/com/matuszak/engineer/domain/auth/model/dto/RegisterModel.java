@@ -23,5 +23,5 @@ public class RegisterModel {
 
     @NotEmpty
 //    @ValidPassword
-    private String rePassword;
+    private String confirmPassword;
 }

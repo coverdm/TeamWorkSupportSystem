@@ -11,6 +11,6 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class ParticipantDTO {
-    private ParticipantId userId;
+    private ParticipantId participantId;
     private ParticipantLevel level;
 }

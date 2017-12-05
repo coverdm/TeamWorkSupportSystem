@@ -40,7 +40,7 @@ public class RegistrationServiceTest {
         RegisterModel registerModel = RegisterModel.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .rePassword(PASSWORD)
+                .confirmPassword(PASSWORD)
                 .username(USERNAME)
                 .build();
 
@@ -67,7 +67,7 @@ public class RegistrationServiceTest {
         RegisterModel registerModel = RegisterModel.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .rePassword(SECOND_PASSWORD)
+                .confirmPassword(SECOND_PASSWORD)
                 .username(USERNAME)
                 .build();
 
@@ -81,7 +81,7 @@ public class RegistrationServiceTest {
         RegisterModel registerModel = RegisterModel.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .rePassword(PASSWORD)
+                .confirmPassword(PASSWORD)
                 .username(USERNAME)
                 .build();
 

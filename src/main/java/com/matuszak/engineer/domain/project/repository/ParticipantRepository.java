@@ -5,6 +5,7 @@ import com.matuszak.engineer.domain.project.model.entity.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     Collection<Participant> getParticipantByParticipantId(ParticipantId id);
