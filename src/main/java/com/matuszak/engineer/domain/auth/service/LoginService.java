@@ -1,5 +1,6 @@
 package com.matuszak.engineer.domain.auth.service;
 
+import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.dto.LoginModel;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.model.entity.Token;
@@ -32,7 +33,7 @@ public class LoginService {
 
         log.info("Authentication process...");
 
-        Optional<Subject> subjectByEmail = this.subjectRepository.getSubjectByEmail(loginModel.getEmail());
+        Optional<Subject> subjectByEmail = this.subjectRepository.getSubjectBySubjectId(new SubjectId(loginModel.getEmail()));
 
         Subject subject = subjectByEmail
                 .filter(e -> isPasswordMatches(loginModel, e))
@@ -40,11 +41,11 @@ public class LoginService {
                 .orElseThrow(() -> new LoginException("Subject is disabled or password doesnt match"));
 
         log.info("Saving token...");
-        Token save = jwtRepository.save(jwtService.createToken(subject));
+        Token token = jwtRepository.save(jwtService.createToken(subject));
         log.info("Token saved");
 
-        auth.put("userId", subject.getUserId().getUserId());
-        auth.put("token", save.getValue());
+        auth.put("id", subject.getSubjectId());
+        auth.put("token", token.getValue());
 
         log.info("Auth context: " + auth.toString());
 

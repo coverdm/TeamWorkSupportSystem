@@ -3,6 +3,7 @@ package com.matuszak.engineer.domain.auth.service;
 import com.matuszak.engineer.domain.auth.exceptions.EmailAlreadyExistsException;
 import com.matuszak.engineer.domain.auth.exceptions.PasswordNotMatchedException;
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
+import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.dto.RegisterModel;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
@@ -26,13 +27,13 @@ public class RegistrationService {
         if(!registerModel.getPassword().equals(registerModel.getRePassword()))
             throw new PasswordNotMatchedException("Passwords are not matched");
 
-        if(subjectRepository.getSubjectByEmail((registerModel.getEmail())).isPresent())
+        if(subjectRepository.getSubjectBySubjectId(new SubjectId(registerModel.getEmail())).isPresent())
             throw new EmailAlreadyExistsException("Email already exists");
 
         log.info("Validation process finished successfully");
 
         Subject subject = Subject.builder()
-                .email(registerModel.getEmail())
+                .subjectId(new SubjectId(registerModel.getEmail()))
                 .password(passwordEncoder.encode(registerModel.getPassword()))
                 .username(registerModel.getUsername())
                 .securityLevel(SecurityLevel.USER)

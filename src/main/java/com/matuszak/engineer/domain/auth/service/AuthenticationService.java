@@ -3,6 +3,7 @@ package com.matuszak.engineer.domain.auth.service;
 
 import com.matuszak.engineer.domain.auth.exceptions.EmailAlreadyExistsException;
 import com.matuszak.engineer.domain.auth.exceptions.PasswordNotMatchedException;
+import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.dto.LoginModel;
 import com.matuszak.engineer.domain.auth.model.dto.RegisterModel;
 import com.matuszak.engineer.domain.auth.model.entity.Token;
@@ -33,8 +34,8 @@ public class AuthenticationService {
         registrationService.register(registerModel);
     }
 
-    public Boolean isUserExists(UserId userId){
-        return subjectRepository.getSubjectByUserId(userId).isPresent();
+    public Boolean isUserExists(SubjectId subjectId){
+        return subjectRepository.getSubjectBySubjectId(subjectId).isPresent();
     }
 
 }
