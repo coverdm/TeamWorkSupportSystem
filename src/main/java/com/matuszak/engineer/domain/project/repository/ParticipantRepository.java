@@ -10,5 +10,5 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
-    Collection<Participant> getParticipantByUserId(UserId id);
+    Collection<Participant> getParticipantByUserId(UserId userId);
 }

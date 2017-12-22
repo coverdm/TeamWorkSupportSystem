@@ -4,6 +4,7 @@ import com.matuszak.engineer.Application;
 import com.matuszak.engineer.domain.auth.exceptions.EmailAlreadyExistsException;
 import com.matuszak.engineer.domain.auth.exceptions.PasswordNotMatchedException;
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
+import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.dto.RegisterModel;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
@@ -45,14 +46,14 @@ public class RegistrationServiceTest {
                 .build();
 
         Subject subject = Subject.builder()
-                .email(registerModel.getEmail())
+                .subjectId(new SubjectId(registerModel.getEmail()))
                 .password(passwordEncoder.encode(registerModel.getPassword()))
                 .username(registerModel.getUsername())
                 .securityLevel(SecurityLevel.USER)
                 .authorities(null)
                 .build();
 
-        when(subjectRepository.getSubjectByEmail(EMAIL))
+        when(subjectRepository.getSubjectBySubjectId(new SubjectId(EMAIL)))
                 .thenReturn(Optional.ofNullable(null));
 
         registrationService.register(registerModel);
@@ -86,14 +87,14 @@ public class RegistrationServiceTest {
                 .build();
 
         Subject subject = Subject.builder()
-                .email(EMAIL)
+                .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(PASSWORD))
                 .username(USERNAME)
                 .securityLevel(SecurityLevel.USER)
                 .authorities(null)
                 .build();
 
-        when(subjectRepository.getSubjectByEmail(EMAIL))
+        when(subjectRepository.getSubjectBySubjectId(new SubjectId(EMAIL)))
                 .thenReturn(Optional.ofNullable(subject));
 
         assertThatExceptionOfType(EmailAlreadyExistsException.class)

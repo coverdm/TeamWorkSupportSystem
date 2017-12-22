@@ -1,6 +1,7 @@
 package com.matuszak.engineer;
 
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
+import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
 import com.matuszak.engineer.domain.auth.service.RegistrationService;
@@ -33,8 +34,8 @@ public class SamplesCreator {
         final String email = "admin@admin.com";
         final String username = "username";
 
-        Subject subject = new Subject(email,username, passwordEncoder.encode(password),
-                SecurityLevel.ADMIN, Boolean.TRUE, null);
+        Subject subject = new Subject(new SubjectId(email),username, passwordEncoder.encode(password),
+                Boolean.TRUE, SecurityLevel.ADMIN, null);
 
         this.subjectRepository.save(subject);
     }

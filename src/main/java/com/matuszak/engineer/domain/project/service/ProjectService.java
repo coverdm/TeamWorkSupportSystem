@@ -4,10 +4,13 @@ import com.matuszak.engineer.domain.project.model.ParticipantLevel;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
+import com.matuszak.engineer.domain.project.model.dto.SourceCodeDto;
 import com.matuszak.engineer.domain.project.model.entity.Participant;
 import com.matuszak.engineer.domain.project.model.entity.Project;
+import com.matuszak.engineer.domain.project.model.entity.SourceCode;
 import com.matuszak.engineer.domain.project.repository.ParticipantRepository;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
+import com.matuszak.engineer.domain.project.repository.SourceCodeLinkRepository;
 import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -28,24 +31,25 @@ public class ProjectService {
     private final ModelMapper modelMapper;
     private final ParticipantRepository participantRepository;
     private final ProjectFactory projectFactory;
+    private final SourceCodeLinkRepository sourceCodeLinkRepository;
 
     public Optional<ProjectDTO> getProjectByProjectId(ProjectId projectId) {
         return projectRepository.getProjectByProjectId(projectId)
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
-    public void addParticipant(ProjectId projectId, UserId userId){
+    public void addParticipant(ProjectId projectId, String userEmail){
         this.projectRepository.getProjectByProjectId(projectId)
                 .ifPresent(e -> {
-                    Participant participant = new Participant(userId, ParticipantLevel.PROGRAMMER);
+                    Participant participant = new Participant(new UserId(userEmail), ParticipantLevel.PROGRAMMER);
                     this.participantRepository.save(participant);
                     e.addParticipant(participant);
                 });
     }
 
-    public Project createProject(ProjectProperties projectProperties, UserId userId) {
+    public Project createProject(ProjectProperties projectProperties, String userEmail) {
         Project project = projectFactory.createProject(projectProperties);
-        Participant participant = participantRepository.save(new Participant(userId, ParticipantLevel.OWNER));
+        Participant participant = participantRepository.save(new Participant(new UserId(userEmail), ParticipantLevel.OWNER));
         project.addParticipant(participant);
         return projectRepository.save(project);
     }
@@ -61,26 +65,36 @@ public class ProjectService {
     }
 
 
-    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(UserId userId){
+    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(String userEmail){
 
-        return (List<ProjectDTO>) getProjectsByUserIn(userId)
+        return (List<ProjectDTO>) getProjectsByUserIn(userEmail)
                 .stream()
                 .map(e -> modelMapper.map(e, ProjectDTO.class))
                 .collect(Collectors.toList());
     }
 
-    private Collection getProjectsByUserIn(UserId userId) {
+    private Collection getProjectsByUserIn(String userEmail) {
 
         Collection<Participant> participants =
-                participantRepository.getParticipantByUserId(userId);
+                participantRepository.getParticipantByUserId(new UserId(userEmail));
 
         Collection<Project> projects =
                 projectRepository.findProjectsByParticipantsIn(participants);
 
         return projects;
     }
-}
 
+    public void addRepositoryLink(ProjectId projectId, SourceCodeDto sourceCodeDto){
+
+        projectRepository.getProjectByProjectId(projectId)
+                .ifPresent( e -> {
+                    SourceCode sourceCode = new SourceCode(sourceCodeDto.getSourceCodeRepositoryHolderType(), sourceCodeDto.getSourceCodeHolderLink());
+                    this.sourceCodeLinkRepository.save(sourceCode);
+                    e.addSourceCode(sourceCode);
+                });
+
+    }
+}
 
 
 

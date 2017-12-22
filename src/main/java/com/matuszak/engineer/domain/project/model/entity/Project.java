@@ -6,6 +6,7 @@ import com.matuszak.engineer.domain.project.model.ProjectStatus;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -23,6 +24,9 @@ public class Project{
     @OneToMany
     private Collection<Participant> participants;
 
+    @OneToMany
+    private Collection<SourceCode> sourceCode;
+
     private Project() { // just for hibernate
     }
 
@@ -35,6 +39,10 @@ public class Project{
 
     public void addParticipant(Participant participant){
         participants.add(participant);
+    }
+
+    public void addSourceCode(SourceCode sourceCode){
+        this.sourceCode.add(sourceCode);
     }
 
     public void markAsDeleted() {

@@ -3,6 +3,7 @@ package com.matuszak.engineer.domain.auth.jwt;
 import com.matuszak.engineer.Application;
 import com.matuszak.engineer.domain.auth.jwt.JwtBuilder;
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
+import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class JwtBuilderTest {
         String username = "username";
 
         Subject subject = Subject.builder()
-                .email(email)
+                .subjectId(new SubjectId(email))
                 .password(passwordEncoder.encode(password))
                 .securityLevel(SecurityLevel.USER)
                 .username(username)

@@ -2,6 +2,7 @@ package com.matuszak.engineer.domain.auth.service;
 
 import com.matuszak.engineer.Application;
 import com.matuszak.engineer.domain.auth.model.SecurityLevel;
+import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.dto.LoginModel;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.model.entity.Token;
@@ -54,7 +55,7 @@ public class LoginServiceTest {
                 .build();
 
         Subject subject = Subject.builder()
-                .email(EMAIL)
+                .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(PASSWORD))
                 .securityLevel(SecurityLevel.USER)
                 .username(USERNAME)
@@ -62,7 +63,7 @@ public class LoginServiceTest {
                 .authorities(null)
                 .build();
 
-        when(subjectRepository.getSubjectByEmail(loginModel.getEmail()))
+        when(subjectRepository.getSubjectBySubjectId(new SubjectId(loginModel.getEmail())))
                 .thenReturn(Optional.ofNullable(subject));
 
         when(jwtService.createToken(subject))
@@ -88,7 +89,7 @@ public class LoginServiceTest {
                 .build();
 
         Subject subject = Subject.builder()
-                .email(EMAIL)
+                .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(password2))
                 .securityLevel(SecurityLevel.USER)
                 .username(USERNAME)
@@ -96,7 +97,7 @@ public class LoginServiceTest {
                 .authorities(null)
                 .build();
 
-        when(subjectRepository.getSubjectByEmail(EMAIL))
+        when(subjectRepository.getSubjectBySubjectId(new SubjectId(EMAIL)))
                 .thenReturn(Optional.ofNullable(subject));
 
         assertThatExceptionOfType(LoginException.class)
@@ -115,7 +116,7 @@ public class LoginServiceTest {
                 .build();
 
         Subject subject = Subject.builder()
-                .email(EMAIL)
+                .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(PASSWORD))
                 .securityLevel(SecurityLevel.USER)
                 .username(USERNAME)
@@ -123,7 +124,7 @@ public class LoginServiceTest {
                 .authorities(null)
                 .build();
 
-        when(subjectRepository.getSubjectByEmail(loginModel.getEmail()))
+        when(subjectRepository.getSubjectBySubjectId(new SubjectId(loginModel.getEmail())))
                 .thenReturn(Optional.ofNullable(subject));
 
         assertThatExceptionOfType(LoginException.class)
