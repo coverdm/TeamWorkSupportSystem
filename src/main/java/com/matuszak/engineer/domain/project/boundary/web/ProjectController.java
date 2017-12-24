@@ -2,12 +2,12 @@ package com.matuszak.engineer.domain.project.boundary.web;
 
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
+import com.matuszak.engineer.domain.project.model.dto.WorkerDto;
 import com.matuszak.engineer.domain.project.model.dto.SourceCodeDto;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
 import com.matuszak.engineer.domain.project.service.ProjectService;
-import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
@@ -33,14 +33,14 @@ public class ProjectController {
     @PostMapping("/create")
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectProperties projectProperties,
                                                     HttpServletRequest httpServletRequest,
-                                                    @RequestParam  String userEmail){
+                                                    @RequestParam  String userId){
 
         log.info("ProjectProperties: " + projectProperties.toString());
 
-        Boolean isUserExists = isUserRegistered(userEmail, httpServletRequest);
+        Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
 
         if(isUserExists){
-            Project project = projectService.createProject(projectProperties, userEmail);
+            Project project = projectService.createProject(projectProperties, userId);
             ProjectDTO projectDTO = modelMapper.map(project, ProjectDTO.class);
             return new ResponseEntity<>(projectDTO,HttpStatus.ACCEPTED);
         }
@@ -57,34 +57,41 @@ public class ProjectController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userEmail){
+    public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId){
 
-        log.info("ProjectId: " + userEmail);
+        log.info("ProjectId: " + userId);
 
         Collection<ProjectDTO> allAvailableProjectsByUserIn =
-                projectService.getAllAvailableProjectsByUserIn(userEmail);
+                projectService.getAllAvailableProjectsByUserIn(userId);
         return new ResponseEntity(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/{uuid}")
-    public ResponseEntity addParticipant(@PathVariable String uuid,
-                                         @RequestParam String userEmail,
-                                         HttpServletRequest httpServletRequest){
+    public ResponseEntity addWorker(@PathVariable String uuid,
+                                    @RequestParam String userId,
+                                    HttpServletRequest httpServletRequest){
 
-        log.info("ProjectId: " + userEmail);
+        log.info("ProjectId: " + userId);
 
-        Boolean isUserExists = isUserRegistered(userEmail, httpServletRequest);
+        Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
 
         if(isUserExists){
-            projectService.addParticipant(new ProjectId(uuid), userEmail);
+            projectService.addWorker(new ProjectId(uuid), userId);
             return new ResponseEntity(HttpStatus.ACCEPTED);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("/{uuid}/workers")
+    public ResponseEntity<Collection<WorkerDto>> getParticipants(@PathVariable String uuid){
+        Collection<WorkerDto> participants = this.projectService.getWorkers(new ProjectId(uuid));
+
+        return new ResponseEntity<>(participants, HttpStatus.OK);
+
+    }
 
     //TODO the endpoint needs to be tested
-    @PostMapping("/{uuid}/createNewRepositoryHolder")
+    @PostMapping("/{uuid}/repository")
     public ResponseEntity createNewRepositoryHolder(@PathVariable String uuid,
                                                     @RequestBody SourceCodeDto sourceCodeDto){
 

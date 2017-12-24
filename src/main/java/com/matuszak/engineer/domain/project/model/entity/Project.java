@@ -6,7 +6,6 @@ import com.matuszak.engineer.domain.project.model.ProjectStatus;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,13 +15,15 @@ public class Project{
 
     @EmbeddedId
     private ProjectId projectId;
+    private ProjectOwner ownerId;
+
     private ProjectProperties projectProperties;
 
     @Enumerated(EnumType.ORDINAL)
     private ProjectStatus projectStatus;
 
     @OneToMany
-    private Collection<Participant> participants;
+    private Collection<Worker> workers;
 
     @OneToMany
     private Collection<SourceCode> sourceCode;
@@ -34,11 +35,11 @@ public class Project{
         this.projectId = projectId;
         this.projectProperties = projectProperties;
         projectStatus = ProjectStatus.CREATED;
-        this.participants = new ArrayList<>();
+        this.workers = new ArrayList<>();
     }
 
-    public void addParticipant(Participant participant){
-        participants.add(participant);
+    public void addParticipant(Worker worker){
+        workers.add(worker);
     }
 
     public void addSourceCode(SourceCode sourceCode){

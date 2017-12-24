@@ -1,14 +1,16 @@
 package com.matuszak.engineer.domain.project.service;
 
-import com.matuszak.engineer.domain.project.model.ParticipantLevel;
+import com.matuszak.engineer.domain.project.exceptions.ParticipantNotFoundException;
+import com.matuszak.engineer.domain.project.model.ProjectRole;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
+import com.matuszak.engineer.domain.project.model.dto.WorkerDto;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
 import com.matuszak.engineer.domain.project.model.dto.SourceCodeDto;
-import com.matuszak.engineer.domain.project.model.entity.Participant;
+import com.matuszak.engineer.domain.project.model.entity.Worker;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.model.entity.SourceCode;
-import com.matuszak.engineer.domain.project.repository.ParticipantRepository;
+import com.matuszak.engineer.domain.project.repository.WorkerRepository;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
 import com.matuszak.engineer.domain.project.repository.SourceCodeLinkRepository;
 import com.matuszak.engineer.infrastructure.entity.UserId;
@@ -29,7 +31,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ModelMapper modelMapper;
-    private final ParticipantRepository participantRepository;
+    private final WorkerRepository workerRepository;
     private final ProjectFactory projectFactory;
     private final SourceCodeLinkRepository sourceCodeLinkRepository;
 
@@ -38,19 +40,19 @@ public class ProjectService {
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
-    public void addParticipant(ProjectId projectId, String userEmail){
+    public void addWorker(ProjectId projectId, String userEmail){
         this.projectRepository.getProjectByProjectId(projectId)
                 .ifPresent(e -> {
-                    Participant participant = new Participant(new UserId(userEmail), ParticipantLevel.PROGRAMMER);
-                    this.participantRepository.save(participant);
-                    e.addParticipant(participant);
+                    Worker worker = new Worker(new UserId(userEmail), ProjectRole.PROGRAMMER);
+                    this.workerRepository.save(worker);
+                    e.addParticipant(worker);
                 });
     }
 
     public Project createProject(ProjectProperties projectProperties, String userEmail) {
         Project project = projectFactory.createProject(projectProperties);
-        Participant participant = participantRepository.save(new Participant(new UserId(userEmail), ParticipantLevel.OWNER));
-        project.addParticipant(participant);
+        Worker worker = workerRepository.save(new Worker(new UserId(userEmail), ProjectRole.OWNER));
+        project.addParticipant(worker);
         return projectRepository.save(project);
     }
 
@@ -65,21 +67,25 @@ public class ProjectService {
     }
 
 
-    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(String userEmail){
+    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(String userId){
 
-        return (List<ProjectDTO>) getProjectsByUserIn(userEmail)
+        return (List<ProjectDTO>) getProjectsByUserIn(userId)
                 .stream()
                 .map(e -> modelMapper.map(e, ProjectDTO.class))
                 .collect(Collectors.toList());
     }
 
-    private Collection getProjectsByUserIn(String userEmail) {
+    private Collection getProjectsByUserIn(String userId) {
 
-        Collection<Participant> participants =
-                participantRepository.getParticipantByUserId(new UserId(userEmail));
+        Collection<Worker> workers =
+                workerRepository.getWorkerByUserId(new UserId(userId));
+
+        log.info(workers.toString());
 
         Collection<Project> projects =
-                projectRepository.findProjectsByParticipantsIn(participants);
+                projectRepository.findProjectsByParticipantsIn(workers);
+
+        log.info(projects.toString());
 
         return projects;
     }
@@ -92,6 +98,20 @@ public class ProjectService {
                     this.sourceCodeLinkRepository.save(sourceCode);
                     e.addSourceCode(sourceCode);
                 });
+
+    }
+
+    public Collection<WorkerDto> getWorkers(ProjectId projectId){
+        return this.getWorkersInProject(projectId)
+                .stream()
+                .map(e -> modelMapper.map(e, WorkerDto.class))
+                .collect(Collectors.toList());
+    }
+
+    private Collection<Worker> getWorkersInProject(ProjectId uuid) {
+        return this.projectRepository.getProjectByProjectId(uuid)
+                .map(Project::getWorkers)
+                .orElseThrow(ParticipantNotFoundException::new);
 
     }
 }

@@ -31,4 +31,8 @@ public class Subject{
 
     @ElementCollection
     private List<SimpleGrantedAuthority> authorities;
+
+    public String getSubjectId(){
+        return subjectId.getEmail();
+    }
 }
