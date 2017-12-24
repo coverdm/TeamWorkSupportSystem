@@ -1,8 +1,8 @@
 package com.matuszak.engineer.domain.profile.model.entity;
 
-import com.matuszak.engineer.domain.profile.model.Contact;
-import com.matuszak.engineer.domain.profile.model.ProfileId;
-import com.matuszak.engineer.domain.profile.model.Skill;
+import com.matuszak.engineer.domain.profile.Contact;
+import com.matuszak.engineer.domain.profile.ProfileId;
+import com.matuszak.engineer.domain.profile.Skill;
 import com.matuszak.engineer.domain.project.model.Avatar;
 import lombok.AllArgsConstructor;
 import lombok.Data;

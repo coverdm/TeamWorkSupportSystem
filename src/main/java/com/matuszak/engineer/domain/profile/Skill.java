@@ -1,4 +1,4 @@
-package com.matuszak.engineer.domain.profile.model;
+package com.matuszak.engineer.domain.profile;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
