@@ -73,14 +73,14 @@ public class SamplesCreator {
         this.workerRepository.save(Arrays.asList(worker, worker2, worker3,
                 worker4, worker5, worker6, worker7));
 
-        firstProject.addParticipant(worker);
-        firstProject.addParticipant(worker3);
-        firstProject.addParticipant(worker5);
-        firstProject.addParticipant(worker7);
+        firstProject.addWorker(worker);
+        firstProject.addWorker(worker3);
+        firstProject.addWorker(worker5);
+        firstProject.addWorker(worker7);
 
-        secProject.addParticipant(worker2);
-        secProject.addParticipant(worker6);
-        secProject.addParticipant(worker4);
+        secProject.addWorker(worker2);
+        secProject.addWorker(worker6);
+        secProject.addWorker(worker4);
 
         this.projectRepository.save(Arrays.asList(firstProject));
         this.projectRepository.save(Arrays.asList(secProject));

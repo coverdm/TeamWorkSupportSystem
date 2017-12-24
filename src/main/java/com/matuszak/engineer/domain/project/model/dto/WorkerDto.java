@@ -1,5 +1,6 @@
 package com.matuszak.engineer.domain.project.model.dto;
 
+import com.matuszak.engineer.domain.project.model.Avatar;
 import com.matuszak.engineer.domain.project.model.ProjectRole;
 import lombok.*;
 

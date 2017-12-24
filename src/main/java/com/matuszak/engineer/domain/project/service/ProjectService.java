@@ -1,6 +1,6 @@
 package com.matuszak.engineer.domain.project.service;
 
-import com.matuszak.engineer.domain.project.exceptions.ParticipantNotFoundException;
+import com.matuszak.engineer.domain.project.exceptions.WorkerNotFoundException;
 import com.matuszak.engineer.domain.project.model.ProjectRole;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
@@ -43,16 +43,16 @@ public class ProjectService {
     public void addWorker(ProjectId projectId, String userEmail){
         this.projectRepository.getProjectByProjectId(projectId)
                 .ifPresent(e -> {
-                    Worker worker = new Worker(new UserId(userEmail), ProjectRole.PROGRAMMER);
+                    Worker worker = new Worker(new UserId(userEmail), ProjectRole.PROJECT_MANAGER);
                     this.workerRepository.save(worker);
-                    e.addParticipant(worker);
+                    e.addWorker(worker);
                 });
     }
 
     public Project createProject(ProjectProperties projectProperties, String userEmail) {
         Project project = projectFactory.createProject(projectProperties);
         Worker worker = workerRepository.save(new Worker(new UserId(userEmail), ProjectRole.OWNER));
-        project.addParticipant(worker);
+        project.addWorker(worker);
         return projectRepository.save(project);
     }
 
@@ -83,7 +83,7 @@ public class ProjectService {
         log.info(workers.toString());
 
         Collection<Project> projects =
-                projectRepository.findProjectsByParticipantsIn(workers);
+                projectRepository.findProjectsByWorkersIn(workers);
 
         log.info(projects.toString());
 
@@ -111,7 +111,7 @@ public class ProjectService {
     private Collection<Worker> getWorkersInProject(ProjectId uuid) {
         return this.projectRepository.getProjectByProjectId(uuid)
                 .map(Project::getWorkers)
-                .orElseThrow(ParticipantNotFoundException::new);
+                .orElseThrow(WorkerNotFoundException::new);
 
     }
 }

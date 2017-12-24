@@ -38,7 +38,7 @@ public class Project{
         this.workers = new ArrayList<>();
     }
 
-    public void addParticipant(Worker worker){
+    public void addWorker(Worker worker){
         workers.add(worker);
     }
 

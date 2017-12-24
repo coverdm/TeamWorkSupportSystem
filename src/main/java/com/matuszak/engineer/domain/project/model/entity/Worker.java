@@ -1,5 +1,6 @@
 package com.matuszak.engineer.domain.project.model.entity;
 
+import com.matuszak.engineer.domain.project.model.Avatar;
 import com.matuszak.engineer.domain.project.model.ProjectRole;
 import com.matuszak.engineer.infrastructure.entity.UserId;
 import lombok.Data;

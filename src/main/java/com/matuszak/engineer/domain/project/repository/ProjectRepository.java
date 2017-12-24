@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<Project, ProjectId> {
     Optional<Project> getProjectByProjectId(ProjectId Uuid);
-    Collection<Project> findProjectsByParticipantsIn(Collection<Worker> worker);
+    Collection<Project> findProjectsByWorkersIn(Collection<Worker> worker);
 }
