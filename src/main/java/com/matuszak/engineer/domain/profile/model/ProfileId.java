@@ -1,18 +1,16 @@
-package com.matuszak.engineer.domain.project.model;
+package com.matuszak.engineer.domain.profile.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Avatar {
-
-    @Column(name = "avatar")
-    private String data;
+public class ProfileId implements Serializable {
+    private String id;
 }

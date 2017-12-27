@@ -4,7 +4,7 @@ import com.matuszak.engineer.domain.auth.model.SecurityLevel;
 import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
-import com.matuszak.engineer.domain.auth.service.RegistrationService;
+import com.matuszak.engineer.domain.profile.repository.ProfileRepository;
 import com.matuszak.engineer.domain.project.model.ProjectRole;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
@@ -31,7 +31,7 @@ public class SamplesCreator {
     private final WorkerRepository workerRepository;
     private final SubjectRepository subjectRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RegistrationService registrationService;
+    private final ProfileRepository profileRepository;
 
     @PostConstruct
     public void setUpDatabase(){
@@ -55,6 +55,14 @@ public class SamplesCreator {
 
         Subject subject4 = new Subject(new SubjectId(email4),username, passwordEncoder.encode(password),
                 Boolean.TRUE, SecurityLevel.USER, null);
+
+//        Profile profile = new Profile(new ProfileId(subject.getSubjectId()));
+//        profile.setName(new Name("Dawid", "Matuszak"));
+//        profile.setSkills(Arrays.asList(new Skill("Java"), new Skill("Angular 2"), new Skill("HTML 5"),new Skill("CSS 3")));
+//        profile.setContact(new Contact("skajpaj", "imajl", "112332142"));
+//        profile.setAvatar(null);
+//
+//        this.profileRepository.save(profile);
 
         this.subjectRepository.save(Arrays.asList(subject, subject2, subject3, subject4));
 

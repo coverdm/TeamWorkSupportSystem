@@ -1,4 +1,4 @@
-package com.matuszak.engineer.domain.profile;
+package com.matuszak.engineer.domain.profile.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +10,6 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Contact {
-    private String skype;
-    private String email;
-    private String phone;
+public class PrefferedRole {
+    private String role;
 }
