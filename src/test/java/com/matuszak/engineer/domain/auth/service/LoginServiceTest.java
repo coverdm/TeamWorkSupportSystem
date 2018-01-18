@@ -57,8 +57,6 @@ public class LoginServiceTest {
         Subject subject = Subject.builder()
                 .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(PASSWORD))
-                .securityLevel(SecurityLevel.USER)
-                .username(USERNAME)
                 .enabled(true)
                 .authorities(null)
                 .build();
@@ -91,8 +89,6 @@ public class LoginServiceTest {
         Subject subject = Subject.builder()
                 .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(password2))
-                .securityLevel(SecurityLevel.USER)
-                .username(USERNAME)
                 .enabled(true)
                 .authorities(null)
                 .build();
@@ -118,8 +114,6 @@ public class LoginServiceTest {
         Subject subject = Subject.builder()
                 .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(PASSWORD))
-                .securityLevel(SecurityLevel.USER)
-                .username(USERNAME)
                 .enabled(isEnabled)
                 .authorities(null)
                 .build();

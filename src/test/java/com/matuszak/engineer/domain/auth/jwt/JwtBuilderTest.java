@@ -37,8 +37,6 @@ public class JwtBuilderTest {
         Subject subject = Subject.builder()
                 .subjectId(new SubjectId(email))
                 .password(passwordEncoder.encode(password))
-                .securityLevel(SecurityLevel.USER)
-                .username(username)
                 .enabled(true)
                 .authorities(null)
                 .build();

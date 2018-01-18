@@ -8,6 +8,6 @@ import javax.persistence.Embeddable;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectOwner {
+public class Owner {
     private String id;
 }

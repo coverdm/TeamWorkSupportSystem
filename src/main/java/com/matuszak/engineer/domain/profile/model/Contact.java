@@ -12,6 +12,5 @@ import javax.persistence.Embeddable;
 @Getter
 public class Contact {
     private String skype;
-    private String email;
     private String phone;
 }

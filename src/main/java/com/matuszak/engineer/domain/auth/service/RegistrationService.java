@@ -24,7 +24,7 @@ public class RegistrationService {
 
         log.info("Performing registration...");
 
-        if(!registerModel.getPassword().equals(registerModel.getRePassword()))
+        if(!registerModel.getPassword().equals(registerModel.getConfirmPassword()))
             throw new PasswordNotMatchedException("Passwords are not matched");
 
         if(subjectRepository.getSubjectBySubjectId(new SubjectId(registerModel.getEmail())).isPresent())
@@ -35,8 +35,7 @@ public class RegistrationService {
         Subject subject = Subject.builder()
                 .subjectId(new SubjectId(registerModel.getEmail()))
                 .password(passwordEncoder.encode(registerModel.getPassword()))
-                .username(registerModel.getUsername())
-                .securityLevel(SecurityLevel.USER)
+                .enabled(Boolean.TRUE)
                 .build();
 
         log.info("Saving user...");

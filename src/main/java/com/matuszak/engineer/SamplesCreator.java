@@ -4,93 +4,180 @@ import com.matuszak.engineer.domain.auth.model.SecurityLevel;
 import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
+import com.matuszak.engineer.domain.profile.model.*;
+import com.matuszak.engineer.domain.profile.model.entity.Profile;
 import com.matuszak.engineer.domain.profile.repository.ProfileRepository;
-import com.matuszak.engineer.domain.project.model.ProjectRole;
-import com.matuszak.engineer.domain.project.model.ProjectId;
-import com.matuszak.engineer.domain.project.model.ProjectProperties;
-import com.matuszak.engineer.domain.project.model.entity.Worker;
+import com.matuszak.engineer.domain.project.model.*;
 import com.matuszak.engineer.domain.project.model.entity.Project;
-import com.matuszak.engineer.domain.project.repository.WorkerRepository;
+import com.matuszak.engineer.domain.project.model.entity.Task;
+import com.matuszak.engineer.domain.project.model.entity.Worker;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
-import com.matuszak.engineer.infrastructure.entity.UserId;
+import com.matuszak.engineer.domain.project.repository.TaskRepository;
+import com.matuszak.engineer.domain.project.repository.WorkerRepository;
+import com.matuszak.engineer.domain.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.UUID;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Log
-public class SamplesCreator {
+public class SamplesCreator implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ProjectRepository projectRepository;
     private final WorkerRepository workerRepository;
     private final SubjectRepository subjectRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProfileRepository profileRepository;
+    private final TaskRepository taskRepository;
+    private final ProjectService projectService;
 
-    @PostConstruct
+    Subject dawidMatuszak, mateuszStanek, marcinTatus, michalGolabek, dawidSikorski;
+    Profile dawidMatuszakProfile, mateuszStanekProfile, marcinTatusProfile, michalGolabekProfile, dawidSikorskiProfile;
+    Project epomis, rumble;
+    Task ratpackBadanie, springImplementation, authModuleImplementation, jpaBadanie;
+
+
+    private void setUpSubjects(){
+
+        final String password = "Password";
+
+        this.dawidMatuszak = new Subject(new SubjectId("dawid_matuszak@outlook.com"), passwordEncoder.encode(password),
+                Boolean.TRUE, null);
+
+        this.mateuszStanek = new Subject(new SubjectId("mateusz_stanek@gmail.com"), passwordEncoder.encode(password),
+                Boolean.TRUE, null);
+
+        this.marcinTatus = new Subject(new SubjectId("marcin_tatus@onet.pl"), passwordEncoder.encode(password),
+                Boolean.TRUE, null);
+
+        this.michalGolabek = new Subject(new SubjectId("michal_golabek@kurnik.pl"), passwordEncoder.encode(password),
+                Boolean.TRUE, null);
+
+        this.dawidSikorski = new Subject(new SubjectId("dawid_sikorski@live.pl"), passwordEncoder.encode(password),
+                Boolean.TRUE, null);
+
+        this.subjectRepository.save(Arrays.asList(this.dawidMatuszak, this.mateuszStanek, this.marcinTatus, this.michalGolabek, this.dawidSikorski));
+
+        log.info("Subjects registered");
+    }
+
+    private void setUpProfiles(){
+
+
+        this.dawidMatuszakProfile = Profile.builder()
+                .name(new Name("Dawid", "Matuszak"))
+                .prefferedRoles(Arrays.asList(new PrefferedRole("Junior Java Developer"), new PrefferedRole("Junior Backend developer")))
+                .avatar(null)
+                .contact(new Contact("jakisTamSkypeProfile", "123423123"))
+                .profileId(new ProfileId(dawidMatuszak.getSubjectId()))
+                .skills(Arrays.asList(new Skill("Java"), new Skill("Angular 4"), new Skill("Hibernate"), new Skill("JPA"), new Skill("Spring"), new Skill("Ratpack")))
+                .build();
+
+        this.mateuszStanekProfile = Profile.builder()
+                .name(new Name("Mateusz", "Stanek"))
+                .prefferedRoles(Arrays.asList(new PrefferedRole("Junior Javascript Developer"), new PrefferedRole("Junior C# Developer")))
+                .avatar(null)
+                .contact(new Contact("mateuszStankeklive", "321452312"))
+                .profileId(new ProfileId(mateuszStanek.getSubjectId()))
+                .skills(Arrays.asList(new Skill("C#"), new Skill("Angular 4"), new Skill("NodeJS"), new Skill("Javascript"), new Skill("React"), new Skill(".NET")))
+                .build();
+
+        this.marcinTatusProfile = Profile.builder()
+                .name(new Name("Marcin", "Tatus"))
+                .prefferedRoles(Arrays.asList(new PrefferedRole("Junior Frontend developer"), new PrefferedRole("Junior engineer developer"), new PrefferedRole("Junior projectManager")))
+                .avatar(null)
+                .contact(new Contact("skypowoTatusiowo", "872341092"))
+                .profileId(new ProfileId(marcinTatus.getSubjectId()))
+                .skills(Arrays.asList(new Skill("Javascript"), new Skill("Angular 4"), new Skill("React"), new Skill("Mongo"), new Skill("Agile"), new Skill("Ruby and Rails")))
+                .build();
+
+        this.michalGolabekProfile = Profile.builder()
+                .name(new Name("Michal", "Golabek"))
+                .prefferedRoles(Arrays.asList(new PrefferedRole("Graphics designer"), new PrefferedRole("Junior UI designer")))
+                .avatar(null)
+                .contact(new Contact("professionalSkype", "981324512"))
+                .profileId(new ProfileId(michalGolabek.getSubjectId()))
+                .skills(Arrays.asList(new Skill("Photoshop"), new Skill("InDesign"), new Skill("Gimp"), new Skill("Illustrator")))
+                .build();
+
+        this.dawidSikorskiProfile = Profile.builder()
+                .name(new Name("Dawid", "Sikorski"))
+                .prefferedRoles(Arrays.asList(new PrefferedRole("Php developer"), new PrefferedRole("Frontend developer")))
+                .avatar(null)
+                .contact(new Contact("OnlyPhpManiac", "782432543"))
+                .profileId(new ProfileId(dawidMatuszak.getSubjectId()))
+                .skills(Arrays.asList(new Skill("Java"), new Skill("Php"), new Skill("Laravel"), new Skill("Html5"), new Skill("CSS3"), new Skill("Javascript")))
+                .build();
+
+        this.profileRepository.save(Arrays.asList(this.dawidMatuszakProfile, this.mateuszStanekProfile, this.michalGolabekProfile, this.marcinTatusProfile, this.dawidSikorskiProfile));
+
+        log.info("Profiles assigned");
+    }
+
+    private void setUpProject(){
+        this.epomis = new Project(new ProjectId(UUID.randomUUID().toString()), new ProjectProperties("epomis", "here is gonna be some description"));
+        this.rumble = new Project(new ProjectId(UUID.randomUUID().toString()), new ProjectProperties("rumble", "here is gonna be some description"));
+
+        log.info("Projects objects created");
+    }
+
+    private void addWorkersToProject(){
+
+        this.epomis.addWorker(new Worker(new WorkerId(dawidMatuszak.getSubjectId()), ProjectRole.OWNER));
+        this.epomis.addWorker(new Worker(new WorkerId(mateuszStanek.getSubjectId()), ProjectRole.FRONTEND_DEVELOPER));
+        this.epomis.addWorker(new Worker(new WorkerId(michalGolabek.getSubjectId()), ProjectRole.GRAPHICS_DESIGNER));
+
+        this.rumble.addWorker(new Worker(new WorkerId(mateuszStanek.getSubjectId()), ProjectRole.OWNER));
+        this.rumble.addWorker(new Worker(new WorkerId(dawidSikorski.getSubjectId()), ProjectRole.BACKEND_DEVELOPER));
+        this.rumble.addWorker(new Worker(new WorkerId(michalGolabek.getSubjectId()), ProjectRole.GRAPHICS_DESIGNER));
+        this.rumble.addWorker(new Worker(new WorkerId(marcinTatus.getSubjectId()), ProjectRole.PROJECT_MANAGER));
+
+        log.info("Workers assigned");
+    }
+
+    private void createTasks(){
+
+        this.ratpackBadanie = new Task("Ratpack", "JustHaveToDoIt", TaskDifficult.EASY, Date.valueOf(LocalDate.now()));
+        this.springImplementation = new Task("Spring implementation", "JustHaveToDoIt", TaskDifficult.MEDIUM, Date.valueOf(LocalDate.now()));
+        this.authModuleImplementation = new Task("AuthModuleImplementation", "JustHaveToDoIt", TaskDifficult.HARD, Date.valueOf(LocalDate.now()));
+        this.jpaBadanie = new Task("JPA Badanie", "JustHaveToDoIt", TaskDifficult.EASY, Date.valueOf(LocalDate.now()));
+
+        this.taskRepository.save(Arrays.asList(this.ratpackBadanie, this.springImplementation, this.authModuleImplementation, this.jpaBadanie));
+
+        log.info("Tasks created");
+    }
+
+    private void assignTasksToProject(){
+        this.epomis.addTask(this.ratpackBadanie);
+        this.epomis.addTask(this.springImplementation);
+    }
+
+    private void assignWorkersToTasks(){
+
+    }
+
     public void setUpDatabase(){
 
-        final String password = "JakisPassword";
-        final String email = "dawid_matuszak@outlook.com";
-        final String email2 = "mateusz_stanek@gmail.com";
-        final String email3 = "marcin_tatus@onet.pl";
-        final String email4 = "michal_golabek@kurnik.pl";
+        setUpSubjects();
+        setUpProfiles();
+        setUpProject();
+        addWorkersToProject();
+        createTasks();
+        assignWorkersToTasks();
+        this.projectRepository.save(Arrays.asList(this.epomis, this.rumble));
+    }
 
-        final String username = "username";
-
-        Subject subject = new Subject(new SubjectId(email),username, passwordEncoder.encode(password),
-                Boolean.TRUE, SecurityLevel.ADMIN, null);
-
-        Subject subject2 = new Subject(new SubjectId(email2),username, passwordEncoder.encode(password),
-                Boolean.TRUE, SecurityLevel.USER, null);
-
-        Subject subject3 = new Subject(new SubjectId(email3),username, passwordEncoder.encode(password),
-                Boolean.TRUE, SecurityLevel.USER, null);
-
-        Subject subject4 = new Subject(new SubjectId(email4),username, passwordEncoder.encode(password),
-                Boolean.TRUE, SecurityLevel.USER, null);
-
-//        Profile profile = new Profile(new ProfileId(subject.getSubjectId()));
-//        profile.setName(new Name("Dawid", "Matuszak"));
-//        profile.setSkills(Arrays.asList(new Skill("Java"), new Skill("Angular 2"), new Skill("HTML 5"),new Skill("CSS 3")));
-//        profile.setContact(new Contact("skajpaj", "imajl", "112332142"));
-//        profile.setAvatar(null);
-//
-//        this.profileRepository.save(profile);
-
-        this.subjectRepository.save(Arrays.asList(subject, subject2, subject3, subject4));
-
-        Project firstProject = new Project(new ProjectId(UUID.randomUUID().toString()), new ProjectProperties("first project", "here is gonna be some description"));
-        Project secProject = new Project(new ProjectId(UUID.randomUUID().toString()), new ProjectProperties("first project", "here is gonna be some description"));
-
-        Worker worker = new Worker(new UserId(email), ProjectRole.OWNER);
-        Worker worker2 = new Worker(new UserId(email), ProjectRole.OWNER);
-
-        Worker worker3 = new Worker(new UserId(email2), ProjectRole.SENIOR_JAVA_DEVELOPER);
-        Worker worker4 = new Worker(new UserId(email2), ProjectRole.SENIOR_JAVA_DEVELOPER);
-        Worker worker5 = new Worker(new UserId(email3), ProjectRole.SENIOR_JAVA_DEVELOPER);
-        Worker worker6 = new Worker(new UserId(email4), ProjectRole.SENIOR_JAVA_DEVELOPER);
-        Worker worker7 = new Worker(new UserId(email4), ProjectRole.GRAPHICS_DESIGNER);
-
-        this.workerRepository.save(Arrays.asList(worker, worker2, worker3,
-                worker4, worker5, worker6, worker7));
-
-        firstProject.addWorker(worker);
-        firstProject.addWorker(worker3);
-        firstProject.addWorker(worker5);
-        firstProject.addWorker(worker7);
-
-        secProject.addWorker(worker2);
-        secProject.addWorker(worker6);
-        secProject.addWorker(worker4);
-
-        this.projectRepository.save(Arrays.asList(firstProject));
-        this.projectRepository.save(Arrays.asList(secProject));
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+//        this.setUpDatabase();
     }
 }

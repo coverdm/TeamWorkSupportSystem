@@ -3,17 +3,23 @@ package com.matuszak.engineer.domain.profile.service;
 import com.matuszak.engineer.domain.profile.model.ProfileId;
 import com.matuszak.engineer.domain.profile.exception.ProfileAlreadyExists;
 import com.matuszak.engineer.domain.profile.exception.ProfileNotFoundException;
+import com.matuszak.engineer.domain.profile.model.dto.MinProfileDto;
 import com.matuszak.engineer.domain.profile.model.dto.ProfileDto;
 import com.matuszak.engineer.domain.profile.model.entity.Profile;
 import com.matuszak.engineer.domain.profile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Log
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
@@ -33,7 +39,11 @@ public class ProfileService {
                 .contact(profileDto.getContact())
                 .name(profileDto.getName())
                 .skills(profileDto.getSkills())
+                .prefferedRoles(profileDto.getPrefferedRoles())
                 .build();
+
+        log.info(profile.toString());
+        log.info(profileDto.toString());
 
         return modelMapper.map(this.profileRepository.save(profile), ProfileDto.class);
     }
@@ -47,6 +57,7 @@ public class ProfileService {
             userProfile.setContact(profileDto.getContact());
             userProfile.setSkills(profileDto.getSkills());
             userProfile.setName(profileDto.getName());
+            userProfile.setPrefferedRoles(profileDto.getPrefferedRoles());
             this.profileRepository.save(userProfile);
         });
 
@@ -55,5 +66,13 @@ public class ProfileService {
 
     public void delete(ProfileId profileId) {
         this.profileRepository.getProfileByProfileId(profileId).ifPresent(profileRepository::delete);
+    }
+
+    public Collection<MinProfileDto> getMinProfiles(Collection<ProfileId> profilesId){
+        List<MinProfileDto> collect = this.profileRepository.getProfilesByProfileIdIn(profilesId)
+                .orElseThrow(ProfileNotFoundException::new)
+                .map(e -> modelMapper.map(e, MinProfileDto.class))
+                .collect(Collectors.toList());
+        return collect;
     }
 }

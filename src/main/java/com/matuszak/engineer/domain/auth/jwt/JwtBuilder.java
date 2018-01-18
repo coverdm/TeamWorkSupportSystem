@@ -18,7 +18,7 @@ public class JwtBuilder {
     public String generateToken(Subject subject){
         return Jwts.builder()
                 .claim("claims", subject.getAuthorities())
-                .setSubject(subject.getUsername())
+                .setSubject(subject.getSubjectId())
                 .setIssuedAt(Date.from(Instant.now().plusSeconds(JwtUtil.EXPIRATION_SECOND_AMOUNT)))
                 .signWith(SignatureAlgorithm.HS256, JwtUtil.SECRET_KEY)
                 .compact();

@@ -1,7 +1,8 @@
-package com.matuszak.engineer.infrastructure.entity;
+package com.matuszak.engineer.domain.project.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -9,13 +10,14 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 @Getter
+@ToString
 @AllArgsConstructor
 @Embeddable
-public class UserId implements Serializable{
+public class WorkerId implements Serializable{
 
-    private String userId;
+    private String workerId;
 
-    private UserId() {
+    private WorkerId() {
     }
 
     public static String generate(){

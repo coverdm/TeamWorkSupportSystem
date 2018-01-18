@@ -12,5 +12,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfileId implements Serializable {
-    private String id;
+    private String profileId;
 }

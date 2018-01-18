@@ -13,7 +13,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="teamworksystem" target="1.8" />
+      <module name="teamworksystem" target="9" />
     </bytecodeTargetLevel>
   </component>
 </project>

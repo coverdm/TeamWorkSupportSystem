@@ -1,5 +1,7 @@
 package com.matuszak.engineer.domain.auth.model.dto;
 
+import com.matuszak.engineer.domain.auth.annotations.ValidEmail;
+import com.matuszak.engineer.domain.auth.annotations.ValidPassword;
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -11,17 +13,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 public class RegisterModel {
 
-//    @ValidEmail
+    @ValidEmail
     private String email;
 
-    @NotEmpty
-    private String username;
-
-    @NotEmpty
-//    @ValidPassword
+    @ValidPassword
     private String password;
 
-    @NotEmpty
-//    @ValidPassword
-    private String rePassword;
+    @ValidPassword
+    private String confirmPassword;
 }

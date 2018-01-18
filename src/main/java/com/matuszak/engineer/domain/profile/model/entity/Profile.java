@@ -1,13 +1,14 @@
 package com.matuszak.engineer.domain.profile.model.entity;
 
 import com.matuszak.engineer.domain.profile.model.*;
-import com.matuszak.engineer.domain.project.model.Avatar;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import java.util.Collection;
 
 @Entity

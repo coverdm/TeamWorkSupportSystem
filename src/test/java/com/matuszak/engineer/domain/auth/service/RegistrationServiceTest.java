@@ -41,15 +41,12 @@ public class RegistrationServiceTest {
         RegisterModel registerModel = RegisterModel.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .rePassword(PASSWORD)
-                .username(USERNAME)
+                .confirmPassword(PASSWORD)
                 .build();
 
         Subject subject = Subject.builder()
                 .subjectId(new SubjectId(registerModel.getEmail()))
                 .password(passwordEncoder.encode(registerModel.getPassword()))
-                .username(registerModel.getUsername())
-                .securityLevel(SecurityLevel.USER)
                 .authorities(null)
                 .build();
 
@@ -68,8 +65,7 @@ public class RegistrationServiceTest {
         RegisterModel registerModel = RegisterModel.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .rePassword(SECOND_PASSWORD)
-                .username(USERNAME)
+                .confirmPassword(SECOND_PASSWORD)
                 .build();
 
         assertThatExceptionOfType(PasswordNotMatchedException.class)
@@ -82,15 +78,12 @@ public class RegistrationServiceTest {
         RegisterModel registerModel = RegisterModel.builder()
                 .email(EMAIL)
                 .password(PASSWORD)
-                .rePassword(PASSWORD)
-                .username(USERNAME)
+                .confirmPassword(PASSWORD)
                 .build();
 
         Subject subject = Subject.builder()
                 .subjectId(new SubjectId(EMAIL))
                 .password(passwordEncoder.encode(PASSWORD))
-                .username(USERNAME)
-                .securityLevel(SecurityLevel.USER)
                 .authorities(null)
                 .build();
 
