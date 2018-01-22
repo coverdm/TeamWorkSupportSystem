@@ -1,6 +1,7 @@
 package com.matuszak.engineer.domain.profile.model.dto;
 
 import com.matuszak.engineer.domain.profile.model.Avatar;
+import com.matuszak.engineer.domain.profile.model.ProfileId;
 import com.matuszak.engineer.domain.project.model.dto.Name;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MinProfileDto {
+    private ProfileId profileId;
     private Name name;
     private Avatar avatar;
 }

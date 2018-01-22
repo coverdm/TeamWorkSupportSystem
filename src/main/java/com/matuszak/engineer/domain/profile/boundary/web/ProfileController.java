@@ -12,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log
@@ -28,18 +30,28 @@ public class ProfileController {
     public ResponseEntity getProfile(@RequestParam String profileId){
 
         try{
-
             ProfileDto profile = this.profileService.getProfile(new ProfileId(profileId));
-
             return new ResponseEntity<>(profile, HttpStatus.OK);
         }catch (ProfileNotFoundException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 
-    @GetMapping("/minWorkers")
-    public ResponseEntity<Collection<MinProfileDto>> getMinProfiles(@RequestBody Collection<String> profilesIds){
+    @GetMapping("/minProfile")
+    public ResponseEntity<MinProfileDto> getMinProfile(@RequestParam String profileId){
+
+        try{
+            MinProfileDto minProfile = this.profileService.getMinProfile(new ProfileId(profileId));
+            return new ResponseEntity<>(minProfile, HttpStatus.ACCEPTED);
+        }catch (ProfileNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/minProfiles")
+    public ResponseEntity<Collection<MinProfileDto>> getMinProfiles(@RequestParam(value = "profileId") List<String> profilesIds){
+
+        log.info(profilesIds.toString());
 
         List<ProfileId> profileIds = profilesIds
                 .stream()
