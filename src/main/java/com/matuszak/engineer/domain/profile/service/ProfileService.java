@@ -12,6 +12,7 @@ import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -69,10 +70,25 @@ public class ProfileService {
     }
 
     public Collection<MinProfileDto> getMinProfiles(Collection<ProfileId> profilesId){
-        List<MinProfileDto> collect = this.profileRepository.getProfilesByProfileIdIn(profilesId)
-                .orElseThrow(ProfileNotFoundException::new)
-                .map(e -> modelMapper.map(e, MinProfileDto.class))
-                .collect(Collectors.toList());
+
+        Collection<MinProfileDto> collect = new ArrayList<>();
+
+        for(ProfileId profileId: profilesId){
+            log.info(profileId.toString());
+            collect.add(getMinProfile(profileId));
+        }
+
+        log.info(collect.toString());
+
         return collect;
+    }
+
+    public MinProfileDto getMinProfile(ProfileId profileId) {
+
+        log.info(profileId.toString());
+
+        return this.profileRepository.getProfileByProfileId(profileId)
+                .map(e -> modelMapper.map(e, MinProfileDto.class))
+                .orElseThrow(ProfileNotFoundException::new);
     }
 }

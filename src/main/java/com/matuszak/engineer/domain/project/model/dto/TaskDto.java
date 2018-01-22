@@ -3,9 +3,10 @@ package com.matuszak.engineer.domain.project.model.dto;
 import com.matuszak.engineer.domain.project.model.TaskDifficult;
 import com.matuszak.engineer.domain.project.model.TaskId;
 import com.matuszak.engineer.domain.project.model.TaskStatus;
+import com.matuszak.engineer.domain.project.model.WorkerId;
 import lombok.*;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 @AllArgsConstructor
@@ -18,9 +19,9 @@ public class TaskDto {
     private TaskId taskId;
     private String title;
     private String description;
-    private Collection<WorkerDto> workers;
+    private Collection<WorkerId> workers;
     private TaskDifficult difficult;
-    private Date created;
-    private Date deadline;
+    private Timestamp created;
+    private Timestamp deadline;
     private TaskStatus status;
 }

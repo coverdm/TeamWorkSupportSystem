@@ -3,29 +3,26 @@ package com.matuszak.engineer.domain.project.service;
 import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.TaskNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.WorkerNotFoundException;
-import com.matuszak.engineer.domain.project.model.ProjectRole;
-import com.matuszak.engineer.domain.project.model.ProjectId;
-import com.matuszak.engineer.domain.project.model.ProjectProperties;
-import com.matuszak.engineer.domain.project.model.TaskId;
+import com.matuszak.engineer.domain.project.model.*;
+import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
 import com.matuszak.engineer.domain.project.model.dto.TaskDto;
 import com.matuszak.engineer.domain.project.model.dto.WorkerDto;
-import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
-import com.matuszak.engineer.domain.project.model.dto.SourceCodeDto;
+import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.model.entity.Task;
 import com.matuszak.engineer.domain.project.model.entity.Worker;
-import com.matuszak.engineer.domain.project.model.entity.Project;
-import com.matuszak.engineer.domain.project.model.entity.SourceCode;
+//import com.matuszak.engineer.domain.project.repository.TaskRepository;
+import com.matuszak.engineer.domain.project.repository.ProjectRepository;
 import com.matuszak.engineer.domain.project.repository.TaskRepository;
 import com.matuszak.engineer.domain.project.repository.WorkerRepository;
-import com.matuszak.engineer.domain.project.repository.ProjectRepository;
-import com.matuszak.engineer.domain.project.repository.SourceCodeLinkRepository;
-import com.matuszak.engineer.domain.project.model.WorkerId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,37 +35,67 @@ public class ProjectService {
     private final WorkerRepository workerRepository;
     private final ProjectFactory projectFactory;
     private final TaskRepository taskRepository;
-    private final SourceCodeLinkRepository sourceCodeLinkRepository;
 
     public Optional<ProjectDTO> getProjectByProjectId(ProjectId projectId) {
         return projectRepository.getProjectByProjectId(projectId)
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
-    public void addWorker(ProjectId projectId, String userId, ProjectRole projectRole){
-        this.projectRepository.getProjectByProjectId(projectId)
-                .ifPresent(e -> {
-                    Worker worker = new Worker(new WorkerId(userId), projectRole);
-                    this.workerRepository.save(worker);
-                    e.addWorker(worker);
-                });
+    public WorkerDto addWorker(ProjectId projectId, String userId, ProjectRole projectRole){
+//        this.projectRepository.getProjectByProjectId(projectId)
+//                .ifPresent(e -> {
+//
+//                    isUserInProject(projectId, userId)
+//                            .ifPresent(workerId -> { throw new WorkerAlreadyHiredException("Worker " + workerId + " is already hired"); });
+//
+//                    Worker worker = new Worker(new WorkerId(userId), projectRole);
+//                    this.workerRepository.save(worker);
+//                    e.addWorker(worker);
+//                    this.projectRepository.save(e);
+//                });
+
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+
+        Worker worker = project.hireWorker(userId, projectRole);
+
+        this.workerRepository.save(worker);
+        this.projectRepository.save(project);
+
+        return this.modelMapper.map(worker, WorkerDto.class);
+    }
+
+    private Optional isUserInProject(ProjectId projectId, String userId){
+        return getWorkersOfProject(projectId)
+                .stream()
+                .map(Worker::getWorkerId)
+                .filter(workerId -> workerId.equals(userId))
+                .findAny();
     }
 
     public Project createProject(ProjectProperties projectProperties, String userEmail) {
+
         Project project = projectFactory.createProject(projectProperties);
-        Worker worker = workerRepository.save(new Worker(new WorkerId(userEmail), ProjectRole.OWNER));
+
+        Worker owner = Worker.builder()
+                .projectRole(ProjectRole.OWNER)
+                .workerId(new WorkerId(userEmail))
+                .build();
+
+        Worker worker = workerRepository.save(owner);
+
         project.addWorker(worker);
         return projectRepository.save(project);
     }
 
     public void delete(ProjectId projectId) {
         projectRepository.getProjectByProjectId(projectId)
-                .ifPresent( Project::markAsDeleted );
+                .ifPresent( Project::finish);
     }
 
     public void close(ProjectId projectId) {
         projectRepository.getProjectByProjectId(projectId)
-                .ifPresent( Project::markAsClosed );
+                .ifPresent( Project::close);
     }
 
 
@@ -84,26 +111,10 @@ public class ProjectService {
 
         Collection<Worker> workers = workerRepository.getWorkerByWorkerId(new WorkerId(userId));
 
-        log.info(workers.toString());
-
         Collection<Project> projects =
                 projectRepository.findProjectsByWorkersIn(workers);
 
-        log.info(projects.toString());
-
-
         return projects;
-    }
-
-    public void addRepositoryLink(ProjectId projectId, SourceCodeDto sourceCodeDto){
-
-        projectRepository.getProjectByProjectId(projectId)
-                .ifPresent( e -> {
-                    SourceCode sourceCode = new SourceCode(sourceCodeDto.getSourceCodeRepositoryHolderType(), sourceCodeDto.getSourceCodeHolderLink());
-                    this.sourceCodeLinkRepository.save(sourceCode);
-                    e.addSourceCode(sourceCode);
-                });
-
     }
 
     public Collection<WorkerDto> getWorkers(ProjectId projectId){
@@ -120,6 +131,7 @@ public class ProjectService {
 
     }
 
+    //TODO ITS NOT WORKING
     public Collection<TaskDto> getTasks(ProjectId projectId) throws TaskNotFoundException {
         return this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new)
@@ -131,28 +143,15 @@ public class ProjectService {
 
     public TaskDto createTask(ProjectId projectId, TaskDto taskDto) throws ProjectNotFoundException {
 
-//        Project project = this.projectRepository.getProjectByProjectId(projectId)
-//                .orElseThrow(ProjectNotFoundException::new);
-//
-        Task task = new Task(taskDto.getTitle(), taskDto.getDescription(), taskDto.getDifficult(), taskDto.getDeadline());
-//
-        Collection<Worker> workers = this.getWorkersOfProject(projectId);
-//
-        List<WorkerId> workersIds = taskDto.getWorkers()
-                .stream()
-                .map(WorkerDto::getWorkerId)
-                .map(WorkerId::new)
-                .filter(workerId -> isPersonInProject(workers, workerId))
-                .collect(Collectors.toList());
-//
-//        Collection<Worker> confirmedWorkers = this.filterWorkersByWorkersId(workers, workersIds);
-//
-//        task.addWorkers(confirmedWorkers);
-//        project.addTask(task);
-//
-//        this.taskRepository.save(task);
-//        this.projectRepository.save(project);
-//
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+
+        Task task = project.createTask(taskDto);
+
+        this.taskRepository.save(task);
+
+        this.projectRepository.save(project);
+
         return this.modelMapper.map(task, TaskDto.class);
     }
 
@@ -207,7 +206,7 @@ public class ProjectService {
                 .findFirst()
                 .orElseThrow(TaskNotFoundException::new);
 
-        first.addWorkers(confirmedWorkers);
+        first.addWorkers(confirmedWorkers.stream().map(Worker::getWorkerId).map(WorkerId::new).collect(Collectors.toList()));
 
         taskRepository.save(first);
         projectRepository.save(project);
@@ -227,7 +226,7 @@ public class ProjectService {
                 .flatMap(tasks -> tasks.stream())
                 .filter(task -> task.getTaskId().getTaskId().equals(taskId.getTaskId()))
                 .findAny()
-                .ifPresent(task -> task.addWorker(worker1));
+                .ifPresent(task -> task.addWorker(new WorkerId(worker1.getWorkerId())));
     }
 
     public void removeTask(ProjectId projectId, TaskId taskId){
@@ -236,14 +235,23 @@ public class ProjectService {
                 .ifPresent(e -> e.removeTask(taskId));
     }
 
-    public void updateTask(ProjectId projectId, TaskDto taskDto) {
-        this.taskRepository.getTaskByTaskId(taskDto.getTaskId())
-                .ifPresent(task -> {
-                    task.setTitle(taskDto.getTitle());
-                    task.setDescription(taskDto.getDescription());
-                    task.setDifficult(taskDto.getDifficult());
-                    this.taskRepository.save(task);
-                });
+    public TaskDto getTask(ProjectId projectId, TaskId taskId){
+
+        Collection<Task> tasks = this.projectRepository.getProjectByProjectId(projectId)
+                .map(Project::getTasks)
+                .get();
+        log.info("Jestem az tu hehe");
+
+        log.info(taskId.getTaskId().toString());
+        log.info(tasks.toString());
+
+        Task task = tasks.stream()
+                .peek(e -> log.info(e.toString()))
+                .filter(e -> e.getTaskId().getTaskId().equals(taskId.getTaskId()))
+                .findAny()
+                .orElseThrow(TaskNotFoundException::new);
+
+        return this.modelMapper.map(task, TaskDto.class);
     }
 }
 

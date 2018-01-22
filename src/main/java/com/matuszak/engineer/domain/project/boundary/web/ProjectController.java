@@ -1,11 +1,10 @@
 package com.matuszak.engineer.domain.project.boundary.web;
 
+import com.matuszak.engineer.domain.project.exceptions.WorkerAlreadyHiredException;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.ProjectProperties;
-import com.matuszak.engineer.domain.project.model.ProjectRole;
-import com.matuszak.engineer.domain.project.model.WorkerId;
+import com.matuszak.engineer.domain.project.model.dto.HireModel;
 import com.matuszak.engineer.domain.project.model.dto.WorkerDto;
-import com.matuszak.engineer.domain.project.model.dto.SourceCodeDto;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.domain.project.model.dto.ProjectDTO;
@@ -31,6 +30,12 @@ public class ProjectController {
     private final RestTemplate restTemplate;
     private final String HOST = "http://localhost:8080";
 
+    @GetMapping("/getAll")
+    public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId){
+        Collection<ProjectDTO> allAvailableProjectsByUserIn =
+                projectService.getAllAvailableProjectsByUserIn(userId);
+        return new ResponseEntity(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectProperties projectProperties,
@@ -61,30 +66,24 @@ public class ProjectController {
                 .orElseThrow(ProjectNotFoundException::new), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId){
-
-        log.info("ProjectId: " + userId);
-
-        Collection<ProjectDTO> allAvailableProjectsByUserIn =
-                projectService.getAllAvailableProjectsByUserIn(userId);
-        return new ResponseEntity(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
-    }
-
 
     //TODO need to consume projectRole
-    @PostMapping("/{uuid}")
-    public ResponseEntity addWorker(@PathVariable String uuid,
-                                    @RequestParam String userId,
-                                    HttpServletRequest httpServletRequest){
+    @PostMapping("/{uuid}/workers/add")
+    public ResponseEntity addUserToProject(@PathVariable String uuid,
+                                           @RequestBody HireModel hireModel,
+                                           HttpServletRequest httpServletRequest){
 
-        log.info("ProjectId: " + userId);
-
-        Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
+        Boolean isUserExists = isUserRegistered(hireModel.getUserId(), httpServletRequest);
 
         if(isUserExists){
-            projectService.addWorker(new ProjectId(uuid), userId, ProjectRole.SENIOR_JAVA_DEVELOPER);
-            return new ResponseEntity(HttpStatus.ACCEPTED);
+
+            try {
+                projectService.addWorker(new ProjectId(uuid), hireModel.getUserId(), hireModel.getProjectRole());
+                return new ResponseEntity(HttpStatus.ACCEPTED);
+            }catch (WorkerAlreadyHiredException e){
+                return new ResponseEntity(HttpStatus.CONFLICT);
+            }
+
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -94,16 +93,6 @@ public class ProjectController {
         Collection<WorkerDto> workers = this.projectService.getWorkers(new ProjectId(uuid));
         return new ResponseEntity<>(workers, HttpStatus.OK);
 
-    }
-
-    //TODO the endpoint needs to be tested
-    @PostMapping("/{uuid}/repository")
-    public ResponseEntity createNewRepositoryHolder(@PathVariable String uuid,
-                                                    @RequestBody SourceCodeDto sourceCodeDto){
-
-        this.projectService.addRepositoryLink(new ProjectId(uuid), sourceCodeDto);
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     private Boolean isUserRegistered(@RequestParam String userEmail, HttpServletRequest httpServletRequest) {

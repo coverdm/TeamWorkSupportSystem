@@ -10,5 +10,5 @@ import java.util.stream.Stream;
 
 public interface ProfileRepository extends JpaRepository<Profile, ProfileId> {
     Optional<Profile> getProfileByProfileId(ProfileId profileId);
-    Optional<Stream<Profile>> getProfilesByProfileIdIn(Collection<ProfileId> profiles);
+    Optional<Collection<Profile>> getProfilesByProfileIdIn(Collection<ProfileId> profiles);
 }
