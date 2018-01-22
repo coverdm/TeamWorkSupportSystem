@@ -1,5 +1,6 @@
 package com.matuszak.engineer.domain.project.boundary.web;
 
+import com.matuszak.engineer.domain.project.exceptions.TaskNotFoundException;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.TaskId;
 import com.matuszak.engineer.domain.project.model.dto.TaskDto;
@@ -21,6 +22,20 @@ public class TaskController {
 
     private final ProjectService projectService;
 
+    @GetMapping("/{uuid}/task")
+    public ResponseEntity<TaskDto> getTask(@PathVariable String uuid, @RequestParam String taskId){
+        try{
+
+            log.info("uuid: " + uuid);
+            log.info("taskId " + taskId);
+
+            TaskDto task = projectService.getTask(new ProjectId(uuid), new TaskId(taskId));
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        }catch (TaskNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{uuid}/tasks")
     public ResponseEntity<Collection<TaskDto>> getTasks(@PathVariable String uuid){
         Collection<TaskDto> tasks = this.projectService.getTasks(new ProjectId(uuid));
@@ -29,6 +44,9 @@ public class TaskController {
 
     @PostMapping("/{uuid}/task/create")
     public ResponseEntity<TaskDto>  createTask(@PathVariable String uuid, @RequestBody TaskDto taskDto) {
+
+        log.info(taskDto.toString());
+
         TaskDto task = this.projectService.createTask(new ProjectId(uuid), taskDto);
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
@@ -45,9 +63,4 @@ public class TaskController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PutMapping("/{uuid}/task/update")
-    public ResponseEntity updateTask(@PathVariable String uuid, @RequestBody TaskDto taskDto) {
-        this.projectService.updateTask(new ProjectId(uuid), taskDto);
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }
