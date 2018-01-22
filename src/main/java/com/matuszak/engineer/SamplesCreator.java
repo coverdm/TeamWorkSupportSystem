@@ -1,6 +1,5 @@
 package com.matuszak.engineer;
 
-import com.matuszak.engineer.domain.auth.model.SecurityLevel;
 import com.matuszak.engineer.domain.auth.model.SubjectId;
 import com.matuszak.engineer.domain.auth.model.entity.Subject;
 import com.matuszak.engineer.domain.auth.repository.SubjectRepository;
@@ -10,7 +9,6 @@ import com.matuszak.engineer.domain.profile.repository.ProfileRepository;
 import com.matuszak.engineer.domain.project.model.*;
 import com.matuszak.engineer.domain.project.model.entity.Project;
 import com.matuszak.engineer.domain.project.model.entity.Task;
-import com.matuszak.engineer.domain.project.model.entity.Worker;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
 import com.matuszak.engineer.domain.project.repository.TaskRepository;
 import com.matuszak.engineer.domain.project.repository.WorkerRepository;
@@ -22,8 +20,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -48,7 +44,7 @@ public class SamplesCreator implements ApplicationListener<ContextRefreshedEvent
 
     private void setUpSubjects(){
 
-        final String password = "Password";
+        final String password = "Mamcie12";
 
         this.dawidMatuszak = new Subject(new SubjectId("dawid_matuszak@outlook.com"), passwordEncoder.encode(password),
                 Boolean.TRUE, null);
@@ -114,7 +110,7 @@ public class SamplesCreator implements ApplicationListener<ContextRefreshedEvent
                 .prefferedRoles(Arrays.asList(new PrefferedRole("Php developer"), new PrefferedRole("Frontend developer")))
                 .avatar(null)
                 .contact(new Contact("OnlyPhpManiac", "782432543"))
-                .profileId(new ProfileId(dawidMatuszak.getSubjectId()))
+                .profileId(new ProfileId(dawidSikorski.getSubjectId()))
                 .skills(Arrays.asList(new Skill("Java"), new Skill("Php"), new Skill("Laravel"), new Skill("Html5"), new Skill("CSS3"), new Skill("Javascript")))
                 .build();
 
@@ -130,54 +126,9 @@ public class SamplesCreator implements ApplicationListener<ContextRefreshedEvent
         log.info("Projects objects created");
     }
 
-    private void addWorkersToProject(){
-
-        this.epomis.addWorker(new Worker(new WorkerId(dawidMatuszak.getSubjectId()), ProjectRole.OWNER));
-        this.epomis.addWorker(new Worker(new WorkerId(mateuszStanek.getSubjectId()), ProjectRole.FRONTEND_DEVELOPER));
-        this.epomis.addWorker(new Worker(new WorkerId(michalGolabek.getSubjectId()), ProjectRole.GRAPHICS_DESIGNER));
-
-        this.rumble.addWorker(new Worker(new WorkerId(mateuszStanek.getSubjectId()), ProjectRole.OWNER));
-        this.rumble.addWorker(new Worker(new WorkerId(dawidSikorski.getSubjectId()), ProjectRole.BACKEND_DEVELOPER));
-        this.rumble.addWorker(new Worker(new WorkerId(michalGolabek.getSubjectId()), ProjectRole.GRAPHICS_DESIGNER));
-        this.rumble.addWorker(new Worker(new WorkerId(marcinTatus.getSubjectId()), ProjectRole.PROJECT_MANAGER));
-
-        log.info("Workers assigned");
-    }
-
-    private void createTasks(){
-
-        this.ratpackBadanie = new Task("Ratpack", "JustHaveToDoIt", TaskDifficult.EASY, Date.valueOf(LocalDate.now()));
-        this.springImplementation = new Task("Spring implementation", "JustHaveToDoIt", TaskDifficult.MEDIUM, Date.valueOf(LocalDate.now()));
-        this.authModuleImplementation = new Task("AuthModuleImplementation", "JustHaveToDoIt", TaskDifficult.HARD, Date.valueOf(LocalDate.now()));
-        this.jpaBadanie = new Task("JPA Badanie", "JustHaveToDoIt", TaskDifficult.EASY, Date.valueOf(LocalDate.now()));
-
-        this.taskRepository.save(Arrays.asList(this.ratpackBadanie, this.springImplementation, this.authModuleImplementation, this.jpaBadanie));
-
-        log.info("Tasks created");
-    }
-
-    private void assignTasksToProject(){
-        this.epomis.addTask(this.ratpackBadanie);
-        this.epomis.addTask(this.springImplementation);
-    }
-
-    private void assignWorkersToTasks(){
-
-    }
-
-    public void setUpDatabase(){
-
-        setUpSubjects();
-        setUpProfiles();
-        setUpProject();
-        addWorkersToProject();
-        createTasks();
-        assignWorkersToTasks();
-        this.projectRepository.save(Arrays.asList(this.epomis, this.rumble));
-    }
-
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-//        this.setUpDatabase();
+        this.setUpSubjects();
+        this.setUpProfiles();
     }
 }
