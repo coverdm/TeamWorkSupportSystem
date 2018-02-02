@@ -54,6 +54,10 @@ public class Task {
         this.workers.addAll(workersIds);
     }
 
+    public void complete(){
+        this.status = TaskStatus.FINISHED;
+    }
+
     public void removeWorker(Worker worker){
         this.workers.remove(worker);
     }

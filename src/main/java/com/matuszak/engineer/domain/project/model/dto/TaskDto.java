@@ -16,7 +16,7 @@ import java.util.Collection;
 @ToString
 @Setter
 public class TaskDto {
-    private TaskId taskId;
+    private String taskId;
     private String title;
     private String description;
     private Collection<WorkerId> workers;

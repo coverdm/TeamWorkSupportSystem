@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Embeddable
 public class WorkerId implements Serializable{
 
+    @Column(name = "worker_id")
     private String workerId;
 
     private WorkerId() {

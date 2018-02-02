@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -79,7 +80,7 @@ public class ProjectController {
 
             try {
                 projectService.addWorker(new ProjectId(uuid), hireModel.getUserId(), hireModel.getProjectRole());
-                return new ResponseEntity(HttpStatus.ACCEPTED);
+                return new ResponseEntity(HttpStatus.OK);
             }catch (WorkerAlreadyHiredException e){
                 return new ResponseEntity(HttpStatus.CONFLICT);
             }
@@ -93,6 +94,16 @@ public class ProjectController {
         Collection<WorkerDto> workers = this.projectService.getWorkers(new ProjectId(uuid));
         return new ResponseEntity<>(workers, HttpStatus.OK);
 
+    }
+
+    @GetMapping("/{uuid}/dashboard")
+    public ResponseEntity<Map<String, Object>> dashboard(@PathVariable String uuid){
+        try{
+            Map map = this.projectService.dashboardProject(new ProjectId(uuid));
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }catch (ProjectNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     private Boolean isUserRegistered(@RequestParam String userEmail, HttpServletRequest httpServletRequest) {

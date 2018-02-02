@@ -1,5 +1,6 @@
 package com.matuszak.engineer.domain.project.boundary.web;
 
+import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.TaskNotFoundException;
 import com.matuszak.engineer.domain.project.model.ProjectId;
 import com.matuszak.engineer.domain.project.model.TaskId;
@@ -61,6 +62,26 @@ public class TaskController {
     public ResponseEntity addWorkers(@PathVariable String uuid, @RequestParam String taskId, @RequestBody Collection<WorkerDto> workers){
         this.projectService.addWorkersToTask(new ProjectId(uuid), new TaskId(taskId), workers);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PutMapping("/{uuid}/task/{taskId}/complete")
+    public ResponseEntity completeTask(@PathVariable String uuid, @PathVariable String taskId){
+        try {
+            this.projectService.completeTask(new ProjectId(uuid), new TaskId(taskId));
+            return new ResponseEntity(HttpStatus.OK);
+        }catch (ProjectNotFoundException | TaskNotFoundException e){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/{uuid}/task/update")
+    public ResponseEntity updateTask(@PathVariable String uuid, @RequestBody TaskDto taskDto){
+        try {
+            this.projectService.updateTask(new ProjectId(uuid), taskDto);
+            return new ResponseEntity(HttpStatus.OK);
+        }catch (ProjectNotFoundException | TaskNotFoundException e){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
     }
 
 }

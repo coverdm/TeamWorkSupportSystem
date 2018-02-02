@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.LoginException;
@@ -50,8 +51,6 @@ public class AuthController {
 
     @GetMapping("/check")
     public ResponseEntity<Boolean> isUserExists(@RequestParam String subjectId){
-
-        log.info("siema to check i sprawdzam");
 
         Boolean userExists = authenticationService.isUserExists(new SubjectId(subjectId));
         return new ResponseEntity<>(userExists, HttpStatus.OK);
