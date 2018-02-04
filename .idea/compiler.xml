@@ -9,10 +9,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="teamworksystem" />
+        <module name="auth" />
+        <module name="profile" />
+        <module name="project" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="auth" target="9" />
+      <module name="profile" target="9" />
+      <module name="project" target="9" />
       <module name="teamworksystem" target="9" />
     </bytecodeTargetLevel>
   </component>
