@@ -12,6 +12,7 @@
         <module>profile</module>
         <module>project</module>
     </modules>
+
     <packaging>pom</packaging>
     <build>
         <plugins>
