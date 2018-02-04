@@ -1,15 +1,19 @@
 package com.matuszak.engineer.domain.project.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.matuszak.engineer.domain.project.model.QuestionStatus;
+import lombok.*;
 
 import java.util.Collection;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Builder
 public class IssueRoomDto {
-    private QuestionDto questionDto;
+    private String issueRoomId;
+    private QuestionDto question;
+    private QuestionStatus questionStatus;
     private Collection<AnswerDto> answers;
 }

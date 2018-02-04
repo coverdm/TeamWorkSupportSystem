@@ -59,7 +59,7 @@ public class WorkerController {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        workerIds.forEach(e -> stringBuilder.append("profileId=" + e.getWorkerId() + "&"));
+        workerIds.forEach(e -> stringBuilder.append("profileId=").append(e.getWorkerId()).append("&"));
         stringBuilder.deleteCharAt(stringBuilder.lastIndexOf("&"));
 
 

@@ -1,9 +1,8 @@
 package com.matuszak.engineer.domain.project.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.matuszak.engineer.domain.project.model.IssueRoomId;
+import com.matuszak.engineer.domain.project.model.QuestionStatus;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,14 +11,29 @@ import java.util.Collection;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Builder
 public class IssueRoom {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+    @EmbeddedId
+    private IssueRoomId issueRoomId;
     private Question question;
 
+    @Enumerated(EnumType.STRING)
+    private QuestionStatus questionStatus;
+
     @ElementCollection
-    private Collection<Answer> answerCollection;
+    private Collection<Answer> answers;
+
+    public String getIssueRoomId(){
+        return this.issueRoomId.getId();
+    }
+
+    public void closeAsSolved(){
+        questionStatus = QuestionStatus.SOLVED;
+    }
+
+    public void addAnswer(Answer answer){
+        answers.add(answer);
+    }
 }

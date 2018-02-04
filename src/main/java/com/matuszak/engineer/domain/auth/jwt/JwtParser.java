@@ -38,7 +38,7 @@ public class JwtParser {
                 .filter(JwtParser::isTokenExpired)
                 .map(JwtParser::extractClaims);
 
-        Optional<List<GrantedAuthority>> grantedAuthorities = claims.map(e -> authorityListFromClaims(e));
+        Optional<List<GrantedAuthority>> grantedAuthorities = claims.map(this::authorityListFromClaims);
 
         return claims.map(Claims::getSubject)
                 .map(e -> new User(e, "", grantedAuthorities.get()))
