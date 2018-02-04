@@ -1,5 +1,6 @@
 package com.matuszak.engineer.domain.project.model.entity;
 
+import com.matuszak.engineer.domain.project.exceptions.IssueRoomNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.TaskNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.WorkerAlreadyHiredException;
 import com.matuszak.engineer.domain.project.model.*;
@@ -202,12 +203,26 @@ public class Project{
     public IssueRoom createIssueRoom(IssueRoomProperties issueRoomProperties) {
 
         IssueRoom issueRoom = IssueRoom.builder()
+                .issueRoomId(new IssueRoomId(IssueRoomId.generate()))
                 .question(new Question(issueRoomProperties.getQuestion().getAuthor(), issueRoomProperties.getQuestion().getMessage()))
-                .answerCollection(new ArrayList<>())
+                .answers(new ArrayList<>())
+                .questionStatus(QuestionStatus.OPEN)
                 .build();
 
         this.issueRooms.add(issueRoom);
 
         return issueRoom;
+    }
+
+    public IssueRoom getIssueRoom(IssueRoomId issueRoomId){
+        return this.issueRooms.stream()
+                .filter(is -> is.getIssueRoomId().equals(issueRoomId.getId()))
+                .findAny()
+                .orElseThrow(IssueRoomNotFoundException::new);
+    }
+
+    public void closeIssuesRoom(IssueRoomId issueRoomId){
+        this.getIssueRoom(issueRoomId)
+                .closeAsSolved();
     }
 }

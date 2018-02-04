@@ -1,14 +1,12 @@
 package com.matuszak.engineer.domain.project.service;
 
+import com.matuszak.engineer.domain.project.exceptions.IssueRoomNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.TaskNotFoundException;
 import com.matuszak.engineer.domain.project.exceptions.WorkerNotFoundException;
 import com.matuszak.engineer.domain.project.model.*;
 import com.matuszak.engineer.domain.project.model.dto.*;
-import com.matuszak.engineer.domain.project.model.entity.IssueRoom;
-import com.matuszak.engineer.domain.project.model.entity.Project;
-import com.matuszak.engineer.domain.project.model.entity.Task;
-import com.matuszak.engineer.domain.project.model.entity.Worker;
+import com.matuszak.engineer.domain.project.model.entity.*;
 //import com.matuszak.engineer.domain.project.repository.TaskRepository;
 import com.matuszak.engineer.domain.project.repository.ProjectRepository;
 import com.matuszak.engineer.domain.project.repository.TaskRepository;
@@ -37,7 +35,7 @@ public class ProjectService {
                 .map(e -> modelMapper.map(e, ProjectDTO.class));
     }
 
-    public WorkerDto addWorker(ProjectId projectId, String userId, ProjectRole projectRole){
+    public WorkerDto addWorker(ProjectId projectId, String userId, ProjectRole projectRole) {
 
         Project project = this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
@@ -50,7 +48,7 @@ public class ProjectService {
         return this.modelMapper.map(worker, WorkerDto.class);
     }
 
-    private Optional isUserInProject(ProjectId projectId, String userId){
+    private Optional isUserInProject(ProjectId projectId, String userId) {
         return getWorkersOfProject(projectId)
                 .stream()
                 .map(Worker::getWorkerId)
@@ -75,16 +73,16 @@ public class ProjectService {
 
     public void delete(ProjectId projectId) {
         projectRepository.getProjectByProjectId(projectId)
-                .ifPresent( Project::finish);
+                .ifPresent(Project::finish);
     }
 
     public void close(ProjectId projectId) {
         projectRepository.getProjectByProjectId(projectId)
-                .ifPresent( Project::close);
+                .ifPresent(Project::close);
     }
 
 
-    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(String userId){
+    public Collection<ProjectDTO> getAllAvailableProjectsByUserIn(String userId) {
 
         return (List<ProjectDTO>) getProjectsByUserIn(userId)
                 .stream()
@@ -102,7 +100,7 @@ public class ProjectService {
         return projects;
     }
 
-    public Collection<WorkerDto> getWorkers(ProjectId projectId){
+    public Collection<WorkerDto> getWorkers(ProjectId projectId) {
         return this.getWorkersOfProject(projectId)
                 .stream()
                 .map(e -> modelMapper.map(e, WorkerDto.class))
@@ -140,30 +138,30 @@ public class ProjectService {
         return this.modelMapper.map(task, TaskDto.class);
     }
 
-    private Collection<Worker> filterWorkersByWorkersId(Collection<Worker> workers, Collection<WorkerId> workerIds){
+    private Collection<Worker> filterWorkersByWorkersId(Collection<Worker> workers, Collection<WorkerId> workerIds) {
 
         Collection<Worker> filteredWorkers = new ArrayList<>(workerIds.size());
 
-        for(WorkerId workerId: workerIds)
+        for (WorkerId workerId : workerIds)
             filteredWorkers.add(getWorkerByWorkerId(workers, workerId));
 
         return filteredWorkers;
     }
 
-    private Worker getWorkerByWorkerId(Collection<Worker> workers, WorkerId workerIds){
+    private Worker getWorkerByWorkerId(Collection<Worker> workers, WorkerId workerIds) {
         return workers.stream()
                 .filter(worker -> worker.getWorkerId().equals(workerIds.getWorkerId()))
                 .findAny()
                 .orElseThrow(WorkerNotFoundException::new);
     }
 
-    private boolean isPersonInProject(ProjectId projectId, WorkerId workerId){
+    private boolean isPersonInProject(ProjectId projectId, WorkerId workerId) {
         return getWorkersOfProject(projectId)
                 .stream()
                 .anyMatch(worker -> worker.getWorkerId().equals(workerId.getWorkerId()));
     }
 
-    private boolean isPersonInProject(Collection<Worker> workersInProject, WorkerId workerId){
+    private boolean isPersonInProject(Collection<Worker> workersInProject, WorkerId workerId) {
         return workersInProject
                 .stream()
                 .anyMatch(worker -> worker.getWorkerId().equals(workerId.getWorkerId()));
@@ -197,7 +195,7 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public void addWorkerToTask(ProjectId projectId, TaskId taskId, WorkerId workerId){
+    public void addWorkerToTask(ProjectId projectId, TaskId taskId, WorkerId workerId) {
 
         Worker worker1 = getWorkersOfProject(projectId)
                 .stream()
@@ -208,13 +206,13 @@ public class ProjectService {
         this.projectRepository.getProjectByProjectId(projectId)
                 .stream()
                 .map(Project::getTasks)
-                .flatMap(tasks -> tasks.stream())
+                .flatMap(Collection::stream)
                 .filter(task -> task.getTaskId().getTaskId().equals(taskId.getTaskId()))
                 .findAny()
                 .ifPresent(task -> task.addWorker(new WorkerId(worker1.getWorkerId())));
     }
 
-    public void removeTask(ProjectId projectId, TaskId taskId){
+    public void removeTask(ProjectId projectId, TaskId taskId) {
         Project project = this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
 
@@ -223,7 +221,7 @@ public class ProjectService {
         this.projectRepository.save(project);
     }
 
-    public TaskDto getTask(ProjectId projectId, TaskId taskId){
+    public TaskDto getTask(ProjectId projectId, TaskId taskId) {
 
         Project project = this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
@@ -237,7 +235,7 @@ public class ProjectService {
         return this.modelMapper.map(task, TaskDto.class);
     }
 
-    public void completeTask(ProjectId projectId, TaskId taskId) throws ProjectNotFoundException, TaskNotFoundException{
+    public void completeTask(ProjectId projectId, TaskId taskId) throws ProjectNotFoundException, TaskNotFoundException {
 
         Project project = this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
@@ -247,7 +245,7 @@ public class ProjectService {
         this.projectRepository.save(project);
     }
 
-    public void updateTask(ProjectId projectId, TaskDto taskDto){
+    public void updateTask(ProjectId projectId, TaskDto taskDto) {
         Project project = this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
 
@@ -256,7 +254,7 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public Map dashboardProject(ProjectId projectId){
+    public Map dashboardProject(ProjectId projectId) {
 
         Project project = this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
@@ -264,15 +262,65 @@ public class ProjectService {
         return project.dashboard();
     }
 
-    public IssueRoomDto createIssueRoom(ProjectId projectId, IssueRoomProperties issueRoomProperties) {
+    public IssueRoomDto createIssueRoom(ProjectId projectId, IssueRoomProperties issueRoomProperties) throws ProjectNotFoundException {
 
         Project project = this.projectRepository.getProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
 
-
         IssueRoom issueRoom = project.createIssueRoom(issueRoomProperties);
 
-        return this.modelMapper.map(issueRoom, IssueRoomDto.class);
+        this.projectRepository.save(project);
+
+        log.info(issueRoom.toString());
+
+        IssueRoomDto map = this.modelMapper.map(issueRoom, IssueRoomDto.class);
+
+        log.info(map.toString());
+
+        return map;
+    }
+
+    public Collection<IssueRoomDto> getIssueRooms(ProjectId projectId) throws ProjectNotFoundException, IssueRoomNotFoundException {
+
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+
+        List<IssueRoomDto> issueRooms = project.getIssueRooms()
+                .stream()
+                .map(e -> modelMapper.map(e, IssueRoomDto.class))
+                .collect(Collectors.toList());
+
+        return issueRooms;
+    }
+
+    public IssueRoomDto getIssueRoom(ProjectId projectId, IssueRoomId issueRoomId) throws ProjectNotFoundException, IssueRoomNotFoundException {
+
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+
+        IssueRoom issueRoom = project.getIssueRoom(issueRoomId);
+
+        return modelMapper.map(issueRoom, IssueRoomDto.class);
+
+    }
+
+    public void closeIssueRoom(ProjectId projectId, IssueRoomId issueRoomId) throws ProjectNotFoundException, IssueRoomNotFoundException {
+
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+        project.closeIssuesRoom(issueRoomId);
+
+        projectRepository.save(project);
+    }
+
+    public void addAnswerIssueRoom(ProjectId projectId, IssueRoomId issueRoomId, AnswerDto answerDto) throws ProjectNotFoundException, IssueRoomNotFoundException {
+
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+
+        project.getIssueRoom(issueRoomId).addAnswer(new Answer(answerDto.getAuthor(), answerDto.getMessage()));
+
+        projectRepository.save(project);
     }
 }
 
