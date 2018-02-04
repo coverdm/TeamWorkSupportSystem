@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class SourceCode{
 
     @Id
-    private Long id;
     private SourceCodeRepositoryHolderType sourceCodeRepositoryHolderType;
     private SourceCodeHolderLink sourceCodeHolderLink;
 }

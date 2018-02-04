@@ -29,7 +29,7 @@ public class ProjectController {
     private final ProjectService projectService;
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
-    private final String HOST = "http://localhost:8080";
+    private final String AUTHENTICATION_MICROSERVICE = "http://localhost:8090";
 
     @GetMapping("/getAll")
     public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId){
@@ -43,16 +43,11 @@ public class ProjectController {
                                                     HttpServletRequest httpServletRequest,
                                                     @RequestParam  String userId){
 
-        log.info("ProjectProperties: " + projectProperties.toString());
-
         Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
-        log.info("isUserExists: " + isUserExists.toString());
 
         if(isUserExists){
             Project project = projectService.createProject(projectProperties, userId);
-            log.info("Created project: " + project.toString());
             ProjectDTO projectDTO = modelMapper.map(project, ProjectDTO.class);
-            log.info("Mapped to projectDTO");
             return new ResponseEntity<>(projectDTO,HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -60,11 +55,12 @@ public class ProjectController {
 
     @GetMapping("/{uuid}")
     public ResponseEntity<ProjectDTO> getProject(@RequestBody String uuid){
-
-        log.info("ProjectId: " + uuid);
-
-        return new ResponseEntity<>(projectService.getProjectByProjectId(new ProjectId(uuid))
-                .orElseThrow(ProjectNotFoundException::new), HttpStatus.ACCEPTED);
+        try{
+            return new ResponseEntity<>(projectService.getProjectByProjectId(new ProjectId(uuid))
+                    .orElseThrow(ProjectNotFoundException::new), HttpStatus.ACCEPTED);
+        }catch (ProjectNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
@@ -111,10 +107,16 @@ public class ProjectController {
         log.info("UserId: " + userEmail);
 
         HttpHeaders headers = new HttpHeaders();
+
+        log.info("AUTHORIZATION: " + httpServletRequest.getHeader("Authorization"));
+
         headers.set("Authorization", httpServletRequest.getHeader("Authorization"));
 
+
         HttpEntity httpEntity = new HttpEntity("parameters", headers);
-        String url = HOST + "/api/auth/check?subjectId=" + userEmail;
+        String url = AUTHENTICATION_MICROSERVICE + "/api/auth/check?subjectId=" + userEmail;
+
+        log.info("URL: " + url);
 
         return restTemplate.exchange(url, HttpMethod.GET, httpEntity, Boolean.class).getBody();
     }

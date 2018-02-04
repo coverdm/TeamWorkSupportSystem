@@ -5,17 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collection;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Document
 public class Profile {
 
+    @Id
     private ProfileId profileId;
 
     private Name name;
@@ -26,11 +26,6 @@ public class Profile {
     private Collection<PrefferedRole> prefferedRoles;
 
     private Contact contact;
-
-    public Profile(ProfileId profileId){
-        this.profileId = profileId;
-    }
-
 
     public void addSkill(Skill skill){
         this.skills.add(skill);

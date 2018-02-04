@@ -15,7 +15,7 @@ public class WorkersCascadeSaveMongoEventListener extends CascadingMongoEventLis
         if(fieldValue instanceof Worker){
             Worker worker = (Worker) fieldValue;
 
-            if(worker.getId() == null){
+            if(worker.getWorkerId() == null){
                 workerRepository.save(worker);
             }
         }

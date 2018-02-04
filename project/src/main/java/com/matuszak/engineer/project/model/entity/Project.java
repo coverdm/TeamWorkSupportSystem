@@ -10,6 +10,7 @@ import com.matuszak.engineer.project.model.dto.TaskDto;
 import lombok.Data;
 import lombok.ToString;
 import lombok.extern.java.Log;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -26,6 +27,7 @@ import java.util.Map;
 @ToString
 public class Project{
 
+    @Id
     private ProjectId projectId;
     private Owner ownerId;
 

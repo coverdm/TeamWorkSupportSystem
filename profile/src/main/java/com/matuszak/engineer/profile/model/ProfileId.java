@@ -8,8 +8,6 @@ import lombok.ToString;
 import java.io.Serializable;
 
 @Getter
-@NoArgsConstructor
-@ToString
 @AllArgsConstructor
 public class ProfileId implements Serializable {
     private String profileId;

@@ -51,6 +51,8 @@ public class AuthController {
     @GetMapping("/check")
     public ResponseEntity<Boolean> isUserExists(@RequestParam String subjectId){
 
+        log.info(subjectId);
+
         Boolean userExists = authenticationService.isUserExists(new SubjectId(subjectId));
         return new ResponseEntity<>(userExists, HttpStatus.OK);
     }

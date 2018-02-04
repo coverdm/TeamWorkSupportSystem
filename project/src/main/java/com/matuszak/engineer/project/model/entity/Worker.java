@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
@@ -17,20 +18,13 @@ import java.io.Serializable;
 * ProjectRole means role in the project.
 * */
 
-@Data
 @Builder
-@AllArgsConstructor
+@Document
 public class Worker implements Serializable{
 
     @Id
-    private Long id;
-
     private WorkerId workerId;
-
     private ProjectRole projectRole;
-
-    private Worker() { // just for hibernate
-    }
 
     public String getWorkerId() {
         return workerId.getWorkerId();

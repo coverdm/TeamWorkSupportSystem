@@ -11,6 +11,7 @@
         <module>auth</module>
         <module>profile</module>
         <module>project</module>
+        <module>register</module>
     </modules>
 
     <packaging>pom</packaging>

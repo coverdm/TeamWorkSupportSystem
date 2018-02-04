@@ -13,16 +13,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Document
-@Data
-@NoArgsConstructor
 @ToString
 @Builder
-@AllArgsConstructor
+@Data
 public class Task {
 
     @Id
-    private Long id;
-
     private TaskId taskId;
 
     private String title;

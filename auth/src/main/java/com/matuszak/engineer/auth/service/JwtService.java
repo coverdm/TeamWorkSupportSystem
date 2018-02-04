@@ -22,6 +22,7 @@ public class JwtService {
 
     public Optional<Authentication> getAuthenticationFromRequest(HttpServletRequest httpServletRequest) {
         String accessToken = httpServletRequest.getHeader("Authorization");
+        log.info("Access TOKEN: " + accessToken);
         return jwtParser.authenticationFromToken(new Token(accessToken));
     }
 

@@ -32,7 +32,7 @@ public class ProfileService {
 
     public ProfileDto createProfile(ProfileId profileId, ProfileDto profileDto) throws ProfileAlreadyExists {
 
-        Profile profile = new Profile().builder()
+        Profile profile = Profile.builder()
                 .profileId(profileId)
                 .avatar(profileDto.getAvatar())
                 .contact(profileDto.getContact())
