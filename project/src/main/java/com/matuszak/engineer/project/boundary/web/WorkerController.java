@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Log
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/project/{{uuid}}/workers")
+@RequestMapping("/{{uuid}}/workers")
 public class WorkerController {
 
     private final ProjectService projectService;

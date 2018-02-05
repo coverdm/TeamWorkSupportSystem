@@ -1,6 +1,5 @@
 package com.matuszak.engineer.auth.config;
 
-import com.matuszak.engineer.auth.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
-public class WebSecureConfig extends WebSecurityConfigurerAdapter {
-
-    private final JwtFilter jwtFilter;
+public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/", "/api/auth/login", "/api/auth/register")
+        web.ignoring().antMatchers("/", "/login", "/register", "/yolo", "/checkAuthorization/**")
                 .antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
@@ -37,19 +34,10 @@ public class WebSecureConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .fullyAuthenticated()
                 .and()
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Bean
-    public FilterRegistrationBean filterRegistrationBean(){
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setEnabled(false);
-        filterRegistrationBean.setFilter(jwtFilter);
-        return filterRegistrationBean;
     }
 
     @Bean

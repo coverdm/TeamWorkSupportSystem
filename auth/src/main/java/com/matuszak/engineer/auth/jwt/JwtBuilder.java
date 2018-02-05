@@ -8,6 +8,7 @@ import lombok.extern.java.Log;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 
 @Component
@@ -17,7 +18,7 @@ public class JwtBuilder {
 
     public String generateToken(Subject subject){
         return Jwts.builder()
-                .claim("claims", subject.getAuthorities())
+                .claim("claims", Arrays.asList("ADMIN"))
                 .setSubject(subject.getSubjectId())
                 .setIssuedAt(Date.from(Instant.now().plusSeconds(JwtUtil.EXPIRATION_SECOND_AMOUNT)))
                 .signWith(SignatureAlgorithm.HS256, JwtUtil.SECRET_KEY)

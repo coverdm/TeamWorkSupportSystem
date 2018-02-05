@@ -19,7 +19,7 @@ import java.util.Collection;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/project/{uuid}")
+@RequestMapping("/{uuid}")
 @Log
 public class IssuesRoomController {
 

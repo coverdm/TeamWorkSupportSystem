@@ -38,6 +38,8 @@ public class JwtParser {
                 .filter(JwtParser::isTokenExpired)
                 .map(JwtParser::extractClaims);
 
+        claims.ifPresentOrElse(e -> log.info(e.getSubject().toString()), () -> log.info("Nieistnieje"));
+
         Optional<List<GrantedAuthority>> grantedAuthorities = claims.map(this::authorityListFromClaims);
 
         return claims.map(Claims::getSubject)
@@ -46,7 +48,12 @@ public class JwtParser {
     }
 
     private static boolean isTokenExpired(String e) {
-        return Instant.now().isBefore(extractExpirationTime(e));
+
+        boolean before = Instant.now().isBefore(extractExpirationTime(e));
+
+        log.info(Boolean.toString(before));
+
+        return before;
     }
 
     private Function<String, String> removeAuthorizationPrefix() {
@@ -54,11 +61,18 @@ public class JwtParser {
     }
 
     private static Claims extractClaims(String token) {
-        return Jwts
+
+        log.info(token);
+
+        Claims body = Jwts
                 .parser()
                 .setSigningKey(JwtUtil.SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
+
+        log.info(body.toString());
+
+        return body;
     }
 
     private static Instant extractExpirationTime(String token){

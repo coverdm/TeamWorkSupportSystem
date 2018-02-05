@@ -2,6 +2,7 @@ package com.matuszak.engineer.project.boundary.web;
 
 import com.matuszak.engineer.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.project.exceptions.WorkerAlreadyHiredException;
+import com.matuszak.engineer.project.interncomm.SecurityAuthenticationChecker;
 import com.matuszak.engineer.project.model.ProjectId;
 import com.matuszak.engineer.project.model.ProjectProperties;
 import com.matuszak.engineer.project.model.dto.HireModel;
@@ -23,16 +24,22 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Log
-@RequestMapping("/api/project")
 public class ProjectController {
 
     private final ProjectService projectService;
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
-    private final String AUTHENTICATION_MICROSERVICE = "http://localhost:8090";
+    private final String AUTHENTICATION_MICROSERVICE = "http://localhost:8080";
+
+    private final SecurityAuthenticationChecker securityAuthenticationChecker;
 
     @GetMapping("/getAll")
-    public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId){
+    public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId, HttpServletRequest httpServletRequest) {
+
+        log.info("#################################################################");
+        checkAuthorization(httpServletRequest);
+        log.info("#################################################################");
+
         Collection<ProjectDTO> allAvailableProjectsByUserIn =
                 projectService.getAllAvailableProjectsByUserIn(userId);
         return new ResponseEntity(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
@@ -41,24 +48,24 @@ public class ProjectController {
     @PostMapping("/create")
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectProperties projectProperties,
                                                     HttpServletRequest httpServletRequest,
-                                                    @RequestParam  String userId){
+                                                    @RequestParam String userId) {
 
         Boolean isUserExists = isUserRegistered(userId, httpServletRequest);
 
-        if(isUserExists){
+        if (isUserExists) {
             Project project = projectService.createProject(projectProperties, userId);
             ProjectDTO projectDTO = modelMapper.map(project, ProjectDTO.class);
-            return new ResponseEntity<>(projectDTO,HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(projectDTO, HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<ProjectDTO> getProject(@RequestBody String uuid){
-        try{
+    public ResponseEntity<ProjectDTO> getProject(@RequestBody String uuid) {
+        try {
             return new ResponseEntity<>(projectService.getProjectByProjectId(new ProjectId(uuid))
                     .orElseThrow(ProjectNotFoundException::new), HttpStatus.ACCEPTED);
-        }catch (ProjectNotFoundException e){
+        } catch (ProjectNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -68,16 +75,16 @@ public class ProjectController {
     @PostMapping("/{uuid}/workers/add")
     public ResponseEntity addUserToProject(@PathVariable String uuid,
                                            @RequestBody HireModel hireModel,
-                                           HttpServletRequest httpServletRequest){
+                                           HttpServletRequest httpServletRequest) {
 
         Boolean isUserExists = isUserRegistered(hireModel.getUserId(), httpServletRequest);
 
-        if(isUserExists){
+        if (isUserExists) {
 
             try {
                 projectService.addWorker(new ProjectId(uuid), hireModel.getUserId(), hireModel.getProjectRole());
                 return new ResponseEntity(HttpStatus.OK);
-            }catch (WorkerAlreadyHiredException e){
+            } catch (WorkerAlreadyHiredException e) {
                 return new ResponseEntity(HttpStatus.CONFLICT);
             }
 
@@ -86,20 +93,31 @@ public class ProjectController {
     }
 
     @GetMapping("/{uuid}/workers")
-    public ResponseEntity<Collection<WorkerDto>> getParticipants(@PathVariable String uuid){
+    public ResponseEntity<Collection<WorkerDto>> getParticipants(@PathVariable String uuid) {
         Collection<WorkerDto> workers = this.projectService.getWorkers(new ProjectId(uuid));
         return new ResponseEntity<>(workers, HttpStatus.OK);
 
     }
 
     @GetMapping("/{uuid}/dashboard")
-    public ResponseEntity<Map<String, Object>> dashboard(@PathVariable String uuid){
-        try{
+    public ResponseEntity<Map<String, Object>> dashboard(@PathVariable String uuid) {
+        try {
             Map map = this.projectService.dashboardProject(new ProjectId(uuid));
             return new ResponseEntity<>(map, HttpStatus.OK);
-        }catch (ProjectNotFoundException e){
+        } catch (ProjectNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private void checkAuthorization(HttpServletRequest httpServletRequest) {
+
+        log.info("AUTHORIZATION: " + httpServletRequest.getHeader("Authorization"));
+
+        int statusCodeValue = securityAuthenticationChecker
+                .checkAuthentication(httpServletRequest.getHeader("Authorization"))
+                .getStatusCodeValue();
+
+        log.info(Integer.toString(statusCodeValue));
     }
 
     private Boolean isUserRegistered(@RequestParam String userEmail, HttpServletRequest httpServletRequest) {

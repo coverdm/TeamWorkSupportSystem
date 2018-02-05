@@ -1,0 +1,26 @@
+zuul:
+  prefix: /api
+  routes:
+    auth:
+      path: /auth/**
+      url: http://localhost:8081
+    profile:
+      path: /profile/**
+      serviceId: profile
+    project:
+      path: /project/**
+      serviceId: project
+  sensitive-headers:
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8070/eureka/
+  instance:
+    hostname: localhost
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+

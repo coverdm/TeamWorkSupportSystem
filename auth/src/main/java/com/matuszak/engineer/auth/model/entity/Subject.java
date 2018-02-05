@@ -6,9 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.List;
+//import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,8 +19,6 @@ public class Subject{
     private SubjectId subjectId;
     private String password;
     private Boolean enabled;
-
-    private List<SimpleGrantedAuthority> authorities;
 
     public String getSubjectId(){
         return subjectId.getEmail();

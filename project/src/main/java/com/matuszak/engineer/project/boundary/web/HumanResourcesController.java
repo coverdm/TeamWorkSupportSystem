@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/project/{{uuid}}/human_resources")
+@RequestMapping("/{{uuid}}/human_resources")
 @Log
 @RequiredArgsConstructor
 public class HumanResourcesController {

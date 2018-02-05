@@ -18,7 +18,6 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @Log
-@RequestMapping("/api/project")
 public class TaskController {
 
     private final ProjectService projectService;

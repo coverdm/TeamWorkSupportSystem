@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @Log
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/profile")
 public class ProfileController {
 
     private final ProfileService profileService;

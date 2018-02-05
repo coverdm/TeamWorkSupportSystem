@@ -10,14 +10,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="auth" />
+        <module name="gateway" />
         <module name="profile" />
         <module name="project" />
+        <module name="proxy" />
+        <module name="register" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="9">
       <module name="auth" target="9" />
+      <module name="gateway" target="9" />
       <module name="profile" target="9" />
       <module name="project" target="9" />
+      <module name="proxy" target="9" />
+      <module name="register" target="9" />
       <module name="teamworksystem" target="9" />
     </bytecodeTargetLevel>
   </component>

@@ -1,0 +1,13 @@
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://127.0.0.1:8070/eureka
+    instance:
+      hostname: localhost
+spring:
+  application:
+    name: profile
+server:
+  port: 8082

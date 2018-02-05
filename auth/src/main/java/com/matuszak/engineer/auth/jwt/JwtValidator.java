@@ -23,6 +23,11 @@ public class JwtValidator {
 
     public boolean isPresentInRepository(String token) {
         log.info("Checking does token exists in repository...");
-        return jwtRepository.getTokenByValue(token).isPresent();
+
+        boolean present = jwtRepository.getTokenByValue(token).isPresent();
+
+        log.info(Boolean.toString(present));
+
+        return present;
     }
 }
