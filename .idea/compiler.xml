@@ -9,7 +9,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="auth" />
+        <module name="gateway" />
+        <module name="notification" />
         <module name="profile" />
+        <module name="project" />
         <module name="proxy" />
         <module name="register" />
       </profile>
@@ -17,6 +21,7 @@
     <bytecodeTargetLevel target="9">
       <module name="auth" target="9" />
       <module name="gateway" target="9" />
+      <module name="notification" target="9" />
       <module name="profile" target="9" />
       <module name="project" target="9" />
       <module name="proxy" target="9" />
