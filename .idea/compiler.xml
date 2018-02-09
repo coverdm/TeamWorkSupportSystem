@@ -9,12 +9,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="auth" />
-        <module name="gateway" />
-        <module name="profile" />
-        <module name="project" />
         <module name="proxy" />
-        <module name="register" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="9">
