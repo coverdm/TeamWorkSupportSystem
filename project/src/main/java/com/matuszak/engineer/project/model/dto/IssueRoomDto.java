@@ -13,6 +13,7 @@ import java.util.Collection;
 @Builder
 public class IssueRoomDto {
     private String issueRoomId;
+    private String title;
     private QuestionDto question;
     private QuestionStatus questionStatus;
     private Collection<AnswerDto> answers;

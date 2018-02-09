@@ -20,7 +20,7 @@ public class TaskDto {
     private String description;
     private Collection<WorkerId> workers;
     private TaskDifficult difficult;
-    private Timestamp created;
-    private Timestamp deadline;
+    private String created;
+    private String deadline;
     private TaskStatus status;
 }

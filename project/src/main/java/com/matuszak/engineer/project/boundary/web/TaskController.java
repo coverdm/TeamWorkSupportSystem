@@ -25,10 +25,6 @@ public class TaskController {
     @GetMapping("/{uuid}/task")
     public ResponseEntity<TaskDto> getTask(@PathVariable String uuid, @RequestParam String taskId){
         try{
-
-            log.info("uuid: " + uuid);
-            log.info("taskId " + taskId);
-
             TaskDto task = projectService.getTask(new ProjectId(uuid), new TaskId(taskId));
             return new ResponseEntity<>(task, HttpStatus.OK);
         }catch (TaskNotFoundException e){

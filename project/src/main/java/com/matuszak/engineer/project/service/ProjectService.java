@@ -270,6 +270,8 @@ public class ProjectService {
 
         IssueRoom issueRoom = project.createIssueRoom(issueRoomProperties);
 
+        log.info(issueRoom.toString());
+
         this.projectRepository.save(project);
 
         log.info(issueRoom.toString());
@@ -322,6 +324,19 @@ public class ProjectService {
         project.getIssueRoom(issueRoomId).addAnswer(new Answer(answerDto.getAuthor(), answerDto.getMessage()));
 
         projectRepository.save(project);
+    }
+
+    public void initSourceCodeRepository(ProjectId projectId, SourceCodeDto sourceCodeDto) throws ProjectNotFoundException{
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+        project.addSourceCode(sourceCodeDto);
+        projectRepository.save(project);
+    }
+
+    public SourceCodeDto getRepository(ProjectId projectId) throws ProjectNotFoundException {
+        Project project = this.projectRepository.getProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+        return modelMapper.map(project.getSourceCode(), SourceCodeDto.class);
     }
 }
 

@@ -16,6 +16,7 @@ import java.util.Collection;
 public class IssueRoom {
 
     private IssueRoomId issueRoomId;
+    private String title;
     private Question question;
 
     private QuestionStatus questionStatus;

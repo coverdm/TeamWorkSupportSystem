@@ -8,7 +8,7 @@ public class SourceCodeHolderLink {
     private String link;
 
     public SourceCodeHolderLink(String link) {
-        HyperlinkValidator.isValueValid(link);
+//        HyperlinkValidator.isValueValid(link);
         this.link = link;
     }
 }

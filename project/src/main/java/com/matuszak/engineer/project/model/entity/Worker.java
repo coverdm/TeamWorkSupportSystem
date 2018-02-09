@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 @Builder
 @Document
+@Data
 public class Worker implements Serializable{
 
     @Id

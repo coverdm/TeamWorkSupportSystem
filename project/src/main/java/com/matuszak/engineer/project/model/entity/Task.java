@@ -4,7 +4,9 @@ import com.matuszak.engineer.project.model.TaskDifficult;
 import com.matuszak.engineer.project.model.TaskId;
 import com.matuszak.engineer.project.model.TaskStatus;
 import com.matuszak.engineer.project.model.WorkerId;
+import com.mongodb.DBObject;
 import lombok.*;
+import org.bson.types.BSONTimestamp;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,8 +30,8 @@ public class Task {
 
     private TaskDifficult difficult;
 
-    private Timestamp created;
-    private Timestamp deadline;
+    private String created;
+    private String deadline;
 
     private TaskStatus status;
 

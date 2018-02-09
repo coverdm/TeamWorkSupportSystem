@@ -1,5 +1,8 @@
 package com.matuszak.engineer.auth.jwt;
 
+import com.matuszak.engineer.auth.exceptions.IllegalJwtFormatException;
+import com.matuszak.engineer.auth.exceptions.UnknownTokenException;
+import com.matuszak.engineer.auth.model.entity.Token;
 import com.matuszak.engineer.auth.repository.JwtRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -12,22 +15,20 @@ public class JwtValidator {
 
     private final JwtRepository jwtRepository;
 
-    public boolean valid(String token){
-        return isPrefixValid(token) && isPresentInRepository(token);
+    public void isPrefixValid(String token) throws IllegalJwtFormatException{
+        if(!token.contains(JwtUtil.PREFIX_AUTHENTICATION))
+            throw new IllegalJwtFormatException(token + " is invalid");
+
     }
 
-    public boolean isPrefixValid(String token){
-        log.info("Checking does token has proper prefix...");
-        return token.contains(JwtUtil.PREFIX_AUTHENTICATION);
-    }
+    public void isPresentInRepository(String token) throws UnknownTokenException{
 
-    public boolean isPresentInRepository(String token) {
-        log.info("Checking does token exists in repository...");
+        Token token1 = jwtRepository.getTokenByValue(token).orElseThrow(() -> new UnknownTokenException(""));
 
-        boolean present = jwtRepository.getTokenByValue(token).isPresent();
+        log.info(token1.toString());
 
-        log.info(Boolean.toString(present));
-
-        return present;
+        if(!jwtRepository.getTokenByValue(token).isPresent()){
+            throw new UnknownTokenException(token + " is not stored in app");
+        }
     }
 }

@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class IssueRoomProperties {
+    private String title;
     private QuestionDto question;
     private String taskId; // <- Optional property
 }

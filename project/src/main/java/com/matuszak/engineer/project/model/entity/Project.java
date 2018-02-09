@@ -1,17 +1,18 @@
 package com.matuszak.engineer.project.model.entity;
 
-import com.matuszak.engineer.project.annotation.CascadeSave;
 import com.matuszak.engineer.project.exceptions.IssueRoomNotFoundException;
 import com.matuszak.engineer.project.exceptions.TaskNotFoundException;
 import com.matuszak.engineer.project.exceptions.WorkerAlreadyHiredException;
 import com.matuszak.engineer.project.model.*;
 import com.matuszak.engineer.project.model.dto.IssueRoomProperties;
+import com.matuszak.engineer.project.model.dto.SourceCodeDto;
 import com.matuszak.engineer.project.model.dto.TaskDto;
+import com.mongodb.BasicDBObject;
 import lombok.Data;
 import lombok.ToString;
 import lombok.extern.java.Log;
+import org.bson.types.BSONTimestamp;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.sql.Timestamp;
@@ -30,21 +31,11 @@ public class Project{
     @Id
     private ProjectId projectId;
     private Owner ownerId;
-
     private ProjectProperties projectProperties;
-
     private ProjectStatus projectStatus;
-
-    @DBRef
-    @CascadeSave
     private Collection<Worker> workers;
-
-    private Collection<SourceCode> sourceCode;
-
+    private SourceCode sourceCode;
     private Collection<Task> tasks;
-
-    @DBRef
-    @CascadeSave
     private Collection<IssueRoom> issueRooms;
 
     public Project(ProjectId projectId, ProjectProperties projectProperties) {
@@ -53,6 +44,8 @@ public class Project{
         projectStatus = ProjectStatus.CREATED;
         this.workers = new ArrayList<>();
         this.tasks = new ArrayList<>();
+        this.issueRooms = new ArrayList<>();
+        this.sourceCode = new SourceCode(SourceCodeRepositoryHolderType.GITHUB, new SourceCodeHolderLink(""));
     }
 
     public void addWorker(Worker worker){
@@ -90,8 +83,8 @@ public class Project{
                 .description(taskDto.getDescription())
                 .difficult(taskDto.getDifficult())
                 .workers(taskDto.getWorkers())
+                .created(String.valueOf(Timestamp.from(Instant.now()).getTime()))
                 .deadline(taskDto.getDeadline())
-                .created(Timestamp.from(Instant.now()))
                 .build();
 
         if (task.getWorkers() == null || task.getWorkers().isEmpty())
@@ -138,10 +131,6 @@ public class Project{
                 .findAny()
                 .orElseThrow(TaskNotFoundException::new)
                 .complete();
-    }
-
-    public void addSourceCode(SourceCode sourceCode){
-        this.sourceCode.add(sourceCode);
     }
 
     public void finish() {
@@ -199,17 +188,17 @@ public class Project{
         return tasks;
     }
 
-    private Project() { // just for hibernate
-    }
-
     public IssueRoom createIssueRoom(IssueRoomProperties issueRoomProperties) {
 
         IssueRoom issueRoom = IssueRoom.builder()
                 .issueRoomId(new IssueRoomId(IssueRoomId.generate()))
+                .title(issueRoomProperties.getTitle())
                 .question(new Question(issueRoomProperties.getQuestion().getAuthor(), issueRoomProperties.getQuestion().getMessage()))
                 .answers(new ArrayList<>())
-                .questionStatus(QuestionStatus.OPEN)
+                .questionStatus(QuestionStatus.ACTIVE)
                 .build();
+
+        log.info(issueRoom.toString());
 
         this.issueRooms.add(issueRoom);
 
@@ -226,5 +215,12 @@ public class Project{
     public void closeIssuesRoom(IssueRoomId issueRoomId){
         this.getIssueRoom(issueRoomId)
                 .closeAsSolved();
+    }
+
+    public void addSourceCode(SourceCodeDto sourceCodeDto){
+        this.sourceCode = SourceCode.builder()
+                .sourceCodeHolderLink(sourceCodeDto.getSourceCodeHolderLink())
+                .sourceCodeRepositoryHolderType(sourceCodeDto.getSourceCodeRepositoryHolderType())
+                .build();
     }
 }

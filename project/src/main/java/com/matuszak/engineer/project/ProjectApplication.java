@@ -10,11 +10,13 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.client.RestTemplate;
 
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients
+@EnableAspectJAutoProxy
 public class ProjectApplication {
 
     public static void main(String[] args) {
@@ -36,11 +38,5 @@ public class ProjectApplication {
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
-    }
-
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
     }
 }

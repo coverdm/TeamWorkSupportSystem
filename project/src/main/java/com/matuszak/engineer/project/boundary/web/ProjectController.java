@@ -2,22 +2,23 @@ package com.matuszak.engineer.project.boundary.web;
 
 import com.matuszak.engineer.project.exceptions.ProjectNotFoundException;
 import com.matuszak.engineer.project.exceptions.WorkerAlreadyHiredException;
-import com.matuszak.engineer.project.interncomm.SecurityAuthenticationChecker;
 import com.matuszak.engineer.project.model.ProjectId;
 import com.matuszak.engineer.project.model.ProjectProperties;
 import com.matuszak.engineer.project.model.dto.HireModel;
 import com.matuszak.engineer.project.model.dto.ProjectDTO;
+import com.matuszak.engineer.project.model.dto.SourceCodeDto;
 import com.matuszak.engineer.project.model.dto.WorkerDto;
 import com.matuszak.engineer.project.model.entity.Project;
 import com.matuszak.engineer.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Null;
 import java.util.Collection;
 import java.util.Map;
 
@@ -28,21 +29,12 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final ModelMapper modelMapper;
-    private final RestTemplate restTemplate;
-    private final String AUTHENTICATION_MICROSERVICE = "http://localhost:8080";
-
-    private final SecurityAuthenticationChecker securityAuthenticationChecker;
 
     @GetMapping("/getAll")
     public ResponseEntity<Collection<ProjectDTO>> getAllProjects(@RequestParam String userId, HttpServletRequest httpServletRequest) {
-
-        log.info("#################################################################");
-        checkAuthorization(httpServletRequest);
-        log.info("#################################################################");
-
         Collection<ProjectDTO> allAvailableProjectsByUserIn =
                 projectService.getAllAvailableProjectsByUserIn(userId);
-        return new ResponseEntity(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(allAvailableProjectsByUserIn, HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/create")
@@ -109,33 +101,47 @@ public class ProjectController {
         }
     }
 
-    private void checkAuthorization(HttpServletRequest httpServletRequest) {
+    @PostMapping("/{uuid}/repository")
+    public ResponseEntity initRepository(@PathVariable String uuid, @RequestBody SourceCodeDto sourceCodeDto){
 
-        log.info("AUTHORIZATION: " + httpServletRequest.getHeader("Authorization"));
+        try{
+            this.projectService.initSourceCodeRepository(new ProjectId(uuid), sourceCodeDto);
+            return new ResponseEntity(HttpStatus.OK);
+        }catch (ProjectNotFoundException e){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
 
-        int statusCodeValue = securityAuthenticationChecker
-                .checkAuthentication(httpServletRequest.getHeader("Authorization"))
-                .getStatusCodeValue();
+    }
 
-        log.info(Integer.toString(statusCodeValue));
+    @GetMapping("/{uuid}/repository")
+    public ResponseEntity<SourceCodeDto> getRepository(@PathVariable String uuid){
+
+        try{
+            SourceCodeDto sourceCodeDto = this.projectService.getRepository(new ProjectId(uuid));
+            return new ResponseEntity<>(sourceCodeDto, HttpStatus.OK);
+        }catch (ProjectNotFoundException | NullPointerException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     private Boolean isUserRegistered(@RequestParam String userEmail, HttpServletRequest httpServletRequest) {
+//
+//        log.info("UserId: " + userEmail);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//
+//        log.info("AUTHORIZATION: " + httpServletRequest.getHeader("Authorization"));
+//
+//        headers.set("Authorization", httpServletRequest.getHeader("Authorization"));
+//
+//
+//        HttpEntity httpEntity = new HttpEntity("parameters", headers);
+//        String url = AUTHENTICATION_MICROSERVICE + "/api/auth/check?subjectId=" + userEmail;
+//
+//        log.info("URL: " + url);
 
-        log.info("UserId: " + userEmail);
-
-        HttpHeaders headers = new HttpHeaders();
-
-        log.info("AUTHORIZATION: " + httpServletRequest.getHeader("Authorization"));
-
-        headers.set("Authorization", httpServletRequest.getHeader("Authorization"));
-
-
-        HttpEntity httpEntity = new HttpEntity("parameters", headers);
-        String url = AUTHENTICATION_MICROSERVICE + "/api/auth/check?subjectId=" + userEmail;
-
-        log.info("URL: " + url);
-
-        return restTemplate.exchange(url, HttpMethod.GET, httpEntity, Boolean.class).getBody();
+//        Boolean body = restTemplate.exchange(url, HttpMethod.GET, httpEntity, Boolean.class).getBody();
+        return true;
     }
 }

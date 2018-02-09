@@ -1,5 +1,8 @@
 package com.matuszak.engineer.auth.service;
 
+import com.matuszak.engineer.auth.exceptions.IllegalJwtFormatException;
+import com.matuszak.engineer.auth.exceptions.TokenHadBeenExpiredException;
+import com.matuszak.engineer.auth.exceptions.UnknownTokenException;
 import com.matuszak.engineer.auth.jwt.JwtBuilder;
 import com.matuszak.engineer.auth.jwt.JwtParser;
 import com.matuszak.engineer.auth.model.entity.Subject;
@@ -18,22 +21,11 @@ public class JwtService {
     private final JwtParser jwtParser;
     private final JwtBuilder jwtBuilder;
 
-    public void getAuthenticationFromRequest(HttpServletRequest httpServletRequest) {
-        String accessToken = httpServletRequest.getHeader("Authorization");
-        log.info("Access TOKEN: " + accessToken);
-        jwtParser.authenticationFromToken(new Token(accessToken));
-    }
-
     public Token createToken(Subject subject) {
         return new Token(jwtBuilder.generateToken(subject));
     }
 
-    public void checkAuthentication(HttpServletRequest httpServletRequest){
-        getAuthenticationFromRequest(httpServletRequest);
-    }
-
-    public void checkAuthenticationToken(String token){
-        log.info("!!!!!!!!!!!TOKEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + token);
-        jwtParser.authenticationFromToken(new Token(token));
+    public void checkAuthorizationToken(Token token) throws NullPointerException, TokenHadBeenExpiredException, IllegalJwtFormatException, UnknownTokenException {
+        jwtParser.parseToken(token);
     }
 }
