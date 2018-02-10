@@ -10,6 +10,9 @@ zuul:
     project:
       path: /project/**
       serviceId: project
+    notification:
+      path: /notification/**
+      serviceId: notification
   sensitive-headers:
 
 eureka:

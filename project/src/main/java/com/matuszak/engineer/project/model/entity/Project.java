@@ -68,7 +68,7 @@ public class Project{
         return worker;
     }
 
-    private boolean isHiredInProject(String userId) {
+    public boolean isHiredInProject(String userId) {
         return this.workers
                 .stream()
                 .map(Worker::getWorkerId)
@@ -95,6 +95,13 @@ public class Project{
         this.tasks.add(task);
 
         return task;
+    }
+
+    public Task getTask(TaskId taskId) throws TaskNotFoundException{
+        return tasks.stream()
+                .filter(task -> task.getTaskId().getTaskId().equals(taskId.getTaskId()))
+                .findAny()
+                .orElseThrow(TaskNotFoundException::new);
     }
 
     public void updateTask(TaskDto taskDto) throws TaskNotFoundException{

@@ -13,10 +13,6 @@ import java.util.UUID;
 public class ProjectFactory {
 
     public Project createProject(ProjectProperties projectProperties) {
-        log.info("Creating new project...");
-
-        Project project = new Project(new ProjectId(UUID.randomUUID().toString()), projectProperties);
-
-        return project;
+        return new Project(new ProjectId(UUID.randomUUID().toString()), projectProperties);
     }
 }

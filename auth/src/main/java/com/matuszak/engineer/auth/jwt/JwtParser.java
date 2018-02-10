@@ -59,4 +59,20 @@ public class JwtParser {
                 .getIssuedAt()
                 .toInstant();
     }
+
+    public String getSubject(String accessToken) {
+        if(accessToken != null){
+            accessToken = accessToken.replace(JwtUtil.PREFIX_AUTHENTICATION, "").trim();
+
+            log.info("GET SUBJECT: " + accessToken);
+
+            Claims claims = JwtParser.extractClaims(accessToken);
+
+            log.info("CLAIMS: " + claims.toString());
+
+            String subject = extractClaims(accessToken).getSubject();
+            return subject;
+        }
+        return null;
+    }
 }

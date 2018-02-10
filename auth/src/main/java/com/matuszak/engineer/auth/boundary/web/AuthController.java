@@ -51,7 +51,7 @@ public class AuthController {
         return new ResponseEntity<>(userExists, HttpStatus.OK);
     }
 
-    @GetMapping("/checkAuthorization/{accessToken}")
+    @GetMapping("/{accessToken}/checkAuthorization")
     public ResponseEntity<Boolean> checkAuthentication(@PathVariable("accessToken") String accessToken) {
 
         try {
@@ -64,8 +64,14 @@ public class AuthController {
 
     }
 
-    @GetMapping("/yolo")
-    public String asd() {
-        return "yolo";
+    @GetMapping("/{accessToken}/getAuthenticatedUser")
+    public String getAuthenticatedUser(@PathVariable("accessToken") String accessToken) {
+        log.info("GET AUTHENTICATED USER " + accessToken);
+
+        String authenticatedUser = authFacade.getAuthenticatedUser(accessToken);
+
+        log.info(authenticatedUser);
+
+        return authenticatedUser;
     }
 }

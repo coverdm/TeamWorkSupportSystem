@@ -1,4 +1,4 @@
-package com.matuszak.engineer.project.interncomm;
+package com.matuszak.engineer.interncomm;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -18,9 +18,9 @@ public class CallAuthorizationServiceAspect {
 
     private final SecurityAuthenticationChecker securityAuthenticationChecker;
 
-    @Before("execution(* com.matuszak.engineer.project.boundary.web.*.* (..))")
+    @Before("execution(* com.matuszak.engineer.boundary.web.*.* (..))")
     public void authorization(){
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        securityAuthenticationChecker.checkAuthentication(request.getHeader("Authorization")).getStatusCodeValue();
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        securityAuthenticationChecker.checkAuthentication(request.getHeader("Authorization")).getStatusCodeValue();
     }
 }

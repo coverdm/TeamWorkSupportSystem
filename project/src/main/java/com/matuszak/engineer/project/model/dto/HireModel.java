@@ -1,14 +1,12 @@
 package com.matuszak.engineer.project.model.dto;
 
 import com.matuszak.engineer.project.model.ProjectRole;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 @NoArgsConstructor
 public class HireModel {
     private String userId;

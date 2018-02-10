@@ -28,4 +28,8 @@ public class JwtService {
     public void checkAuthorizationToken(Token token) throws NullPointerException, TokenHadBeenExpiredException, IllegalJwtFormatException, UnknownTokenException {
         jwtParser.parseToken(token);
     }
+
+    public String getSubject(String accessToken) {
+        return jwtParser.getSubject(accessToken);
+    }
 }

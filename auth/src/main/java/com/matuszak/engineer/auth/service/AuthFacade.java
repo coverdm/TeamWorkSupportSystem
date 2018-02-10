@@ -39,4 +39,8 @@ public class AuthFacade {
     public void checkAuthentication(Token token) throws NullPointerException, TokenHadBeenExpiredException, IllegalJwtFormatException, UnknownTokenException {
         jwtService.checkAuthorizationToken(token);
     }
+
+    public String getAuthenticatedUser(String accessToken) {
+        return jwtService.getSubject(accessToken);
+    }
 }
