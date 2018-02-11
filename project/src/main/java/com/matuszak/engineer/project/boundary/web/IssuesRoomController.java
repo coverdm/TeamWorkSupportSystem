@@ -57,7 +57,7 @@ public class IssuesRoomController {
     }
 
     @PutMapping("/issue-room")
-    public ResponseEntity<IssueRoomDto> closeIssueRoom(@PathVariable String uuid, @RequestParam String id){
+    public ResponseEntity closeIssueRoom(@PathVariable String uuid, @RequestParam String id){
         try{
             projectFacade.closeIssueRoom(new ProjectId(uuid), new IssueRoomId(id));
             return new ResponseEntity<>(HttpStatus.OK);
@@ -67,7 +67,7 @@ public class IssuesRoomController {
     }
 
     @PostMapping("/issue-room/answer")
-    public ResponseEntity<IssueRoomDto> answer(@PathVariable String uuid,
+    public ResponseEntity answer(@PathVariable String uuid,
                                                @RequestParam String id,
                                                @RequestBody AnswerDto answerDto){
         try{
